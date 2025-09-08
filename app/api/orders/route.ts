@@ -54,14 +54,10 @@ export async function GET(request: Request) {
       return NextResponse.json({ orders: [transformedOrder] });
     }
 
-    // Fetch all orders
+    // Fetch all orders without including products first
     const orders = await prisma.order.findMany({
       include: {
-        items: {
-          include: {
-            product: true,
-          },
-        },
+        items: true,
         user: true,
       },
       orderBy: {
@@ -69,11 +65,33 @@ export async function GET(request: Request) {
       },
     });
 
-    // Filter out order items with missing products
-    const validOrders = orders.map(order => ({
-      ...order,
-      items: order.items.filter(item => item.product !== null)
-    })).filter(order => order.items.length > 0);
+    // For each order, fetch valid items with products
+    const validOrders = [];
+    for (const order of orders) {
+      const validItems = [];
+      for (const item of order.items) {
+        try {
+          const product = await prisma.product.findUnique({
+            where: { id: item.productId }
+          });
+          if (product) {
+            validItems.push({
+              ...item,
+              product: product
+            });
+          }
+        } catch (error) {
+          console.log(`Product ${item.productId} not found, skipping item`);
+        }
+      }
+      
+      if (validItems.length > 0) {
+        validOrders.push({
+          ...order,
+          items: validItems
+        });
+      }
+    }
 
     console.log('✅ Found orders:', validOrders.length);
 
