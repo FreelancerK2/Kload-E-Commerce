@@ -15,7 +15,9 @@ export async function POST() {
     // Find order items that reference non-existent products
     const orphanedItems = await prisma.orderItem.findMany({
       where: {
-        product: null
+        product: {
+          is: null
+        }
       }
     });
     
@@ -25,7 +27,9 @@ export async function POST() {
     if (orphanedItems.length > 0) {
       const deleteResult = await prisma.orderItem.deleteMany({
         where: {
-          product: null
+          product: {
+            is: null
+          }
         }
       });
       
