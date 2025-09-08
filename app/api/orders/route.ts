@@ -234,3 +234,53 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
+export async function PUT(request: NextRequest) {
+  try {
+    const { orderId, status } = await request.json();
+
+    if (!orderId || !status) {
+      return NextResponse.json(
+        { error: 'Order ID and status are required' },
+        { status: 400 }
+      );
+    }
+
+    // Validate status
+    const validStatuses = ['PENDING', 'PAID', 'SHIPPED', 'DELIVERED', 'CANCELLED'];
+    if (!validStatuses.includes(status)) {
+      return NextResponse.json(
+        { error: 'Invalid status. Must be one of: ' + validStatuses.join(', ') },
+        { status: 400 }
+      );
+    }
+
+    // Update the order
+    const updatedOrder = await prisma.order.update({
+      where: { id: orderId },
+      data: { status },
+    });
+
+    console.log(`✅ Order ${orderId} updated to ${status}`);
+
+    return NextResponse.json({
+      success: true,
+      message: `Order ${orderId} updated to ${status}`,
+      order: {
+        id: updatedOrder.id,
+        status: updatedOrder.status,
+        total: updatedOrder.total,
+        stripeSessionId: updatedOrder.stripeSessionId,
+      },
+    });
+  } catch (error) {
+    console.error('❌ Error updating order status:', error);
+    return NextResponse.json(
+      {
+        error: 'Failed to update order status',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      },
+      { status: 500 }
+    );
+  }
+}
