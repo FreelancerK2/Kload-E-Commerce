@@ -159,7 +159,7 @@ export async function POST(request: NextRequest) {
     let user = null;
     const orderData: any = {
       total: total || 0,
-      status: 'PENDING',
+      status: 'PAID', // Automatically set to PAID since payment was successful
       stripeSessionId: paymentIntentId,
     };
 
