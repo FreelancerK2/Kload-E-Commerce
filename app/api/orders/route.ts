@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 export async function GET(request: Request) {
   try {
+    console.log('🔄 Fetching orders...');
+    
     const { searchParams } = new URL(request.url);
     const sessionId = searchParams.get('sessionId');
 
@@ -50,7 +54,7 @@ export async function GET(request: Request) {
       return NextResponse.json({ orders: [transformedOrder] });
     }
 
-    // Fetch all orders (existing logic)
+    // Fetch all orders
     const orders = await prisma.order.findMany({
       include: {
         items: {
@@ -64,6 +68,8 @@ export async function GET(request: Request) {
         createdAt: 'desc',
       },
     });
+
+    console.log('✅ Found orders:', orders.length);
 
     const transformedOrders = orders.map((order) => ({
       id: order.id,
@@ -89,9 +95,12 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ orders: transformedOrders });
   } catch (error) {
-    console.error('Error fetching orders:', error);
+    console.error('❌ Error fetching orders:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch orders' },
+      { 
+        error: 'Failed to fetch orders',
+        details: error instanceof Error ? error.message : String(error)
+      },
       { status: 500 }
     );
   }
@@ -99,10 +108,12 @@ export async function GET(request: Request) {
 
 export async function POST(request: NextRequest) {
   try {
+    console.log('🔄 Creating order...');
+    
     const body = await request.json();
     const { items, guestInfo, paymentIntentId, total } = body;
 
-    console.log('Creating order with data:', {
+    console.log('Order data:', {
       items: items?.length,
       guestInfo,
       paymentIntentId,
@@ -122,7 +133,11 @@ export async function POST(request: NextRequest) {
 
     // Create or find user
     let user = null;
-    const orderData: any = {};
+    const orderData: any = {
+      total: total || 0,
+      status: 'PENDING',
+      stripeSessionId: paymentIntentId,
+    };
 
     if (guestInfo && guestInfo.email) {
       try {
@@ -143,14 +158,14 @@ export async function POST(request: NextRequest) {
               clerkId: `guest_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
             },
           });
-          console.log('Created guest user:', user.id);
+          console.log('✅ Created guest user:', user.id);
         } else {
-          console.log('Found existing user:', user.id);
+          console.log('✅ Found existing user:', user.id);
         }
 
         orderData.userId = user.id;
       } catch (userError) {
-        console.error('Error handling user:', userError);
+        console.error('❌ Error handling user:', userError);
         // Continue without user if there's an error
         orderData.userId = null;
       }
@@ -159,86 +174,33 @@ export async function POST(request: NextRequest) {
       orderData.userId = null;
     }
 
-    // Validate products exist and have sufficient stock
-    const productValidation = await Promise.all(
-      items.map(async (item: any) => {
-        const product = await prisma.product.findUnique({
-          where: { id: item.id },
-        });
-        return {
-          item,
-          product,
-          hasStock: product && (product.stockCount || 0) >= item.quantity,
-        };
-      })
-    );
-
-    const invalidItems = productValidation.filter(
-      (p) => !p.product || !p.hasStock
-    );
-    if (invalidItems.length > 0) {
-      return NextResponse.json(
-        {
-          error: 'Some items are out of stock or invalid',
-          invalidItems: invalidItems.map((p) => p.item.id),
-        },
-        { status: 400 }
-      );
-    }
-
-    // Decrease stock for each item
-    await Promise.all(
-      productValidation.map(async ({ item, product }) => {
-        if (product) {
-          const newStockCount = Math.max(
-            0,
-            (product.stockCount || 0) - item.quantity
-          );
-          const newInStock = newStockCount > 0;
-
-          await prisma.product.update({
-            where: { id: item.id },
-            data: {
-              stockCount: newStockCount,
-              inStock: newInStock,
-            },
-          });
-          console.log(
-            `Updated stock for product ${item.id}: ${newStockCount} remaining`
-          );
-        }
-      })
-    );
-
-    // Create order in database
+    // Create the order
     const order = await prisma.order.create({
-      data: {
-        ...orderData,
-        stripeSessionId: paymentIntentId,
-        total,
-        status: 'PAID',
-        items: {
-          create: items.map((item: any) => ({
-            productId: item.id,
-            quantity: item.quantity,
-            price: item.price,
-          })),
-        },
-      },
-      include: {
-        items: true,
-        user: true,
-      },
+      data: orderData,
     });
 
-    console.log('Order created successfully:', order.id);
+    console.log('✅ Order created:', order.id);
+
+    // Create order items
+    for (const item of items) {
+      await prisma.orderItem.create({
+        data: {
+          orderId: order.id,
+          productId: item.id,
+          quantity: item.quantity,
+          price: item.price,
+        },
+      });
+    }
+
+    console.log('✅ Order items created for order:', order.id);
 
     return NextResponse.json({
       orderId: order.id,
       message: 'Order created successfully',
     });
   } catch (error) {
-    console.error('Error creating order:', error);
+    console.error('❌ Error creating order:', error);
     return NextResponse.json(
       {
         error: 'Failed to create order',
