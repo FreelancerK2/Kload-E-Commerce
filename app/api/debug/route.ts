@@ -35,7 +35,7 @@ export async function GET() {
       await prisma.$disconnect();
       
     } catch (prismaError) {
-      prismaStatus += ` | ❌ Error: ${prismaError.message}`;
+      prismaStatus += ` | ❌ Error: ${prismaError instanceof Error ? prismaError.message : String(prismaError)}`;
     }
     
     return NextResponse.json({
@@ -50,7 +50,7 @@ export async function GET() {
     console.error('❌ Debug error:', error);
     return NextResponse.json({
       success: false,
-      error: error.message,
+      error: error instanceof Error ? error.message : String(error),
       timestamp: new Date().toISOString()
     }, { status: 500 });
   }

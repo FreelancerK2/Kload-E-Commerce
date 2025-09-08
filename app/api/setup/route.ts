@@ -98,8 +98,8 @@ export async function POST() {
     console.error('❌ Setup error:', error);
     return NextResponse.json({
       success: false,
-      error: error.message,
-      details: error.toString()
+      error: error instanceof Error ? error.message : String(error),
+      details: error instanceof Error ? error.toString() : String(error)
     }, { status: 500 });
   }
 }
@@ -131,7 +131,7 @@ export async function GET() {
     console.error('❌ Status check error:', error);
     return NextResponse.json({
       success: false,
-      error: error.message
+      error: error instanceof Error ? error.message : String(error)
     }, { status: 500 });
   }
 }
