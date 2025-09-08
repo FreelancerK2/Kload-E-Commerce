@@ -12,14 +12,24 @@ export async function POST() {
     await prisma.$connect();
     console.log('✅ Connected to database');
     
-    // Find order items that reference non-existent products
-    const orphanedItems = await prisma.orderItem.findMany({
-      where: {
-        product: {
-          is: null
+    // Find all order items first
+    const allOrderItems = await prisma.orderItem.findMany();
+    
+    // Filter out items that reference non-existent products
+    const orphanedItems = [];
+    for (const item of allOrderItems) {
+      try {
+        const product = await prisma.product.findUnique({
+          where: { id: item.productId }
+        });
+        if (!product) {
+          orphanedItems.push(item);
         }
+      } catch (error) {
+        // If product doesn't exist, add to orphaned items
+        orphanedItems.push(item);
       }
-    });
+    }
     
     console.log(`Found ${orphanedItems.length} orphaned order items`);
     
@@ -27,8 +37,8 @@ export async function POST() {
     if (orphanedItems.length > 0) {
       const deleteResult = await prisma.orderItem.deleteMany({
         where: {
-          product: {
-            is: null
+          id: {
+            in: orphanedItems.map(item => item.id)
           }
         }
       });
