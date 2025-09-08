@@ -1,0 +1,13 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="48" height="48" rx="8" fill="#10B981"/>
+  <!-- Watch -->
+  <circle cx="24" cy="20" r="8" fill="white" opacity="0.9"/>
+  <circle cx="24" cy="20" r="6" fill="#10B981"/>
+  <!-- Watch hands -->
+  <path d="M24 16v8M20 24h8" stroke="white" stroke-width="1.5" opacity="0.9"/>
+  <!-- Watch band -->
+  <path d="M16 28h16v2H16z" fill="white" opacity="0.9"/>
+  <path d="M18 30h12v2H18z" fill="white" opacity="0.9"/>
+  <!-- Watch buckle -->
+  <rect x="22" y="32" width="4" height="2" fill="white" opacity="0.9"/>
+</svg>

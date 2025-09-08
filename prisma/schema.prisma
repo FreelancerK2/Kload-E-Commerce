@@ -1,0 +1,118 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:../dev.db"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  clerkId   String   @unique
+  email     String   @unique
+  firstName String?
+  lastName  String?
+  imageUrl  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  orders    Order[]
+
+  @@map("users")
+}
+
+model Product {
+  id                 String      @id @default(cuid())
+  sanityId           String      @unique
+  name               String
+  description        String
+  price              Float
+  originalPrice      Float?
+  discountPercentage Int?
+  images             String
+  category           String
+  tags               String
+  inStock            Boolean     @default(true)
+  stockCount         Int         @default(0)
+  rating             Float       @default(0)
+  isFeatured         Boolean     @default(false)
+  isNewArrival       Boolean     @default(false)
+  isTrending         Boolean     @default(false)
+  isTopRated         Boolean     @default(false)
+  isFlashDeal        Boolean     @default(false)
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+  orderItems         OrderItem[]
+
+  @@map("products")
+}
+
+model Order {
+  id              String      @id @default(cuid())
+  userId          String?
+  stripeSessionId String?     @unique
+  status          OrderStatus @default(PENDING)
+  total           Float
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  items           OrderItem[]
+  user            User?       @relation(fields: [userId], references: [id])
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  orderId   String
+  productId String
+  quantity  Int
+  price     Float
+  product   Product @relation(fields: [productId], references: [id])
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@map("order_items")
+}
+
+model SiteContent {
+  id                String   @id @default(cuid())
+  section           String   @unique
+  title             String?
+  subtitle          String?
+  description       String?
+  buttonText        String?
+  buttonLink        String?
+  backgroundImage   String?
+  backgroundOpacity Int?     @default(50)
+  isActive          Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  heroImage         String?
+  backgroundColor   String?  @default("#ffffff")
+  removeBackground  Boolean? @default(false)
+  aggressiveRemoval Boolean? @default(false)
+
+  @@map("site_content")
+}
+
+model Category {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String?
+  imageUrl    String?
+  color       String?  @default("#3B82F6")
+  isActive    Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("categories")
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}

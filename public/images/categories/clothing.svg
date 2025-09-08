@@ -1,0 +1,14 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="48" height="48" rx="8" fill="#8B5CF6"/>
+  <!-- Shirt -->
+  <path d="M20 16h8v2h-8z" fill="white" opacity="0.9"/>
+  <path d="M18 18h12v2H18z" fill="white" opacity="0.9"/>
+  <path d="M16 20h16v2H16z" fill="white" opacity="0.9"/>
+  <path d="M14 22h20v2H14z" fill="white" opacity="0.9"/>
+  <path d="M12 24h24v2H12z" fill="white" opacity="0.9"/>
+  <!-- Sleeves -->
+  <path d="M12 26l-2 4h2l2-4z" fill="white" opacity="0.9"/>
+  <path d="M36 26l2 4h-2l-2-4z" fill="white" opacity="0.9"/>
+  <!-- Collar -->
+  <path d="M22 16l-2-2h8l-2 2z" fill="white" opacity="0.9"/>
+</svg>
