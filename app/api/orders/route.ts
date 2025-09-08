@@ -69,9 +69,15 @@ export async function GET(request: Request) {
       },
     });
 
-    console.log('✅ Found orders:', orders.length);
+    // Filter out order items with missing products
+    const validOrders = orders.map(order => ({
+      ...order,
+      items: order.items.filter(item => item.product !== null)
+    })).filter(order => order.items.length > 0);
 
-    const transformedOrders = orders.map((order) => ({
+    console.log('✅ Found orders:', validOrders.length);
+
+    const transformedOrders = validOrders.map((order) => ({
       id: order.id,
       stripeSessionId: order.stripeSessionId,
       total: order.total,
