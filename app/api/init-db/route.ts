@@ -14,12 +14,12 @@ export async function POST() {
     
     // Create tables by trying to insert and catch errors
     const results = {
-      categories: { created: false, error: null },
-      siteContent: { created: false, error: null },
-      users: { created: false, error: null },
-      products: { created: false, error: null },
-      orders: { created: false, error: null },
-      orderItems: { created: false, error: null }
+      categories: { created: false, error: null as string | null },
+      siteContent: { created: false, error: null as string | null },
+      users: { created: false, error: null as string | null },
+      products: { created: false, error: null as string | null },
+      orders: { created: false, error: null as string | null },
+      orderItems: { created: false, error: null as string | null }
     };
     
     // Try to create a category (this will create the table if it doesn't exist)
