@@ -22,15 +22,30 @@ export async function POST() {
       orderItems: { created: false, error: null as string | null }
     };
     
+    // Create OrderStatus enum first
+    try {
+      await prisma.$executeRaw`
+        DO $$ BEGIN
+          CREATE TYPE "public"."OrderStatus" AS ENUM ('PENDING', 'PAID', 'SHIPPED', 'DELIVERED', 'CANCELLED');
+        EXCEPTION
+          WHEN duplicate_object THEN null;
+        END $$;
+      `;
+      console.log('✅ OrderStatus enum created');
+    } catch (error) {
+      console.log('OrderStatus enum might already exist:', error instanceof Error ? error.message : String(error));
+    }
+
     // Create categories table
     try {
       await prisma.$executeRaw`
         CREATE TABLE IF NOT EXISTS "public"."categories" (
           "id" TEXT NOT NULL,
           "name" TEXT NOT NULL,
-          "slug" TEXT NOT NULL,
+          "slug" TEXT NOT NULL UNIQUE,
           "description" TEXT,
-          "color" TEXT,
+          "imageUrl" TEXT,
+          "color" TEXT DEFAULT '#3B82F6',
           "isActive" BOOLEAN NOT NULL DEFAULT true,
           "sortOrder" INTEGER NOT NULL DEFAULT 0,
           "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -50,16 +65,21 @@ export async function POST() {
       await prisma.$executeRaw`
         CREATE TABLE IF NOT EXISTS "public"."site_content" (
           "id" TEXT NOT NULL,
-          "section" TEXT NOT NULL,
+          "section" TEXT NOT NULL UNIQUE,
           "title" TEXT,
           "subtitle" TEXT,
           "description" TEXT,
           "buttonText" TEXT,
           "buttonLink" TEXT,
+          "backgroundImage" TEXT,
+          "backgroundOpacity" INTEGER DEFAULT 50,
           "isActive" BOOLEAN NOT NULL DEFAULT true,
-          "backgroundColor" TEXT,
           "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
           "updatedAt" TIMESTAMP(3) NOT NULL,
+          "heroImage" TEXT,
+          "backgroundColor" TEXT DEFAULT '#ffffff',
+          "removeBackground" BOOLEAN DEFAULT false,
+          "aggressiveRemoval" BOOLEAN DEFAULT false,
           CONSTRAINT "site_content_pkey" PRIMARY KEY ("id")
         )
       `;
@@ -75,17 +95,11 @@ export async function POST() {
       await prisma.$executeRaw`
         CREATE TABLE IF NOT EXISTS "public"."users" (
           "id" TEXT NOT NULL,
-          "clerkId" TEXT NOT NULL,
-          "email" TEXT NOT NULL,
+          "clerkId" TEXT NOT NULL UNIQUE,
+          "email" TEXT NOT NULL UNIQUE,
           "firstName" TEXT,
           "lastName" TEXT,
-          "phoneNumber" TEXT,
-          "address" TEXT,
-          "city" TEXT,
-          "state" TEXT,
-          "zipCode" TEXT,
-          "country" TEXT,
-          "isAdmin" BOOLEAN NOT NULL DEFAULT false,
+          "imageUrl" TEXT,
           "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
           "updatedAt" TIMESTAMP(3) NOT NULL,
           CONSTRAINT "users_pkey" PRIMARY KEY ("id")
@@ -103,14 +117,23 @@ export async function POST() {
       await prisma.$executeRaw`
         CREATE TABLE IF NOT EXISTS "public"."products" (
           "id" TEXT NOT NULL,
-          "sanityId" TEXT NOT NULL,
+          "sanityId" TEXT NOT NULL UNIQUE,
           "name" TEXT NOT NULL,
           "description" TEXT,
-          "price" DECIMAL(10,2) NOT NULL,
+          "price" DOUBLE PRECISION NOT NULL,
+          "originalPrice" DOUBLE PRECISION,
+          "discountPercentage" INTEGER,
           "images" TEXT,
           "category" TEXT,
           "tags" TEXT,
-          "isActive" BOOLEAN NOT NULL DEFAULT true,
+          "inStock" BOOLEAN NOT NULL DEFAULT true,
+          "stockCount" INTEGER NOT NULL DEFAULT 0,
+          "rating" DOUBLE PRECISION NOT NULL DEFAULT 0,
+          "isFeatured" BOOLEAN NOT NULL DEFAULT false,
+          "isNewArrival" BOOLEAN NOT NULL DEFAULT false,
+          "isTrending" BOOLEAN NOT NULL DEFAULT false,
+          "isTopRated" BOOLEAN NOT NULL DEFAULT false,
+          "isFlashDeal" BOOLEAN NOT NULL DEFAULT false,
           "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
           "updatedAt" TIMESTAMP(3) NOT NULL,
           CONSTRAINT "products_pkey" PRIMARY KEY ("id")
@@ -129,9 +152,9 @@ export async function POST() {
         CREATE TABLE IF NOT EXISTS "public"."orders" (
           "id" TEXT NOT NULL,
           "userId" TEXT,
-          "total" DECIMAL(10,2) NOT NULL,
-          "status" TEXT NOT NULL DEFAULT 'PENDING',
-          "stripeSessionId" TEXT,
+          "stripeSessionId" TEXT UNIQUE,
+          "status" "public"."OrderStatus" NOT NULL DEFAULT 'PENDING',
+          "total" DOUBLE PRECISION NOT NULL,
           "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
           "updatedAt" TIMESTAMP(3) NOT NULL,
           CONSTRAINT "orders_pkey" PRIMARY KEY ("id")
@@ -152,9 +175,7 @@ export async function POST() {
           "orderId" TEXT NOT NULL,
           "productId" TEXT NOT NULL,
           "quantity" INTEGER NOT NULL,
-          "price" DECIMAL(10,2) NOT NULL,
-          "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-          "updatedAt" TIMESTAMP(3) NOT NULL,
+          "price" DOUBLE PRECISION NOT NULL,
           CONSTRAINT "order_items_pkey" PRIMARY KEY ("id")
         )
       `;
