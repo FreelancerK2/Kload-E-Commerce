@@ -92,9 +92,9 @@ export default function InvoiceGenerator({
             
             /* Invoice container - more compact for single page */
             #invoice-content { 
-              padding: 20px !important; 
+              padding: 24px !important; 
               background: white !important; 
-              max-width: 800px !important; 
+              max-width: 900px !important; 
               margin: 0 auto !important; 
               font-size: 14px !important;
               line-height: 1.4 !important;
@@ -109,7 +109,9 @@ export default function InvoiceGenerator({
             .mb-3 { margin-bottom: 6px !important; }
             .mb-2 { margin-bottom: 4px !important; }
             .mt-8 { margin-top: 16px !important; }
+            .mt-6 { margin-top: 12px !important; }
             .pt-6 { padding-top: 12px !important; }
+            .pt-4 { padding-top: 8px !important; }
             
             /* Logo and company name - more compact */
             .w-16 { width: 48px !important; }
@@ -168,6 +170,7 @@ export default function InvoiceGenerator({
             .py-3 { padding-top: 6px !important; padding-bottom: 6px !important; }
             .py-4 { padding-top: 8px !important; padding-bottom: 8px !important; }
             .pb-2 { padding-bottom: 4px !important; }
+            .space-y-1 > * + * { margin-top: 4px !important; }
             
             /* Layout */
             .grid { display: grid !important; }
@@ -308,29 +311,29 @@ export default function InvoiceGenerator({
 
         {/* Invoice Content */}
         <div className="overflow-y-auto max-h-[calc(90vh-120px)]">
-          <div id="invoice-content" className="p-8 bg-white">
+          <div id="invoice-content" className="p-6 bg-white max-w-4xl mx-auto">
             {/* Company Header */}
             <div className="text-center mb-8">
               <div className="flex items-center justify-center mb-4">
                 <div className="w-16 h-16 bg-black rounded-full flex items-center justify-center mr-4">
                   <span className="text-white font-bold text-2xl">K</span>
                 </div>
-                <div>
+                <div className="text-left">
                   <h1 className="text-4xl font-bold text-gray-900">Kload</h1>
                   <p className="text-lg text-gray-600">Premium E-commerce Store</p>
                 </div>
               </div>
-              <div className="bg-gray-100 rounded-lg p-4 border border-gray-200">
+              <div className="bg-gray-100 p-4 rounded-lg">
                 <p className="text-gray-700 font-medium">Your One-Stop Electronic Market</p>
                 <p className="text-sm text-gray-500 mt-1">Quality Electronics • Fast Delivery • 24/7 Support</p>
               </div>
             </div>
 
             {/* Bill To Section */}
-            <div className="mb-8">
-              <h3 className="text-lg font-bold text-gray-900 mb-3">Bill To:</h3>
+            <div className="mb-6">
+              <h3 className="text-lg font-bold text-gray-900 mb-2">Bill To:</h3>
               {order.user ? (
-                <div className="text-gray-700 space-y-1">
+                <div className="text-gray-700">
                   <p className="font-semibold text-lg">
                     {order.user.firstName} {order.user.lastName}
                   </p>
@@ -342,9 +345,9 @@ export default function InvoiceGenerator({
             </div>
 
             {/* Invoice Details Section */}
-            <div className="mb-8">
-              <h3 className="text-lg font-bold text-gray-900 mb-3">Invoice Details:</h3>
-              <div className="text-gray-700 space-y-2">
+            <div className="mb-6">
+              <h3 className="text-lg font-bold text-gray-900 mb-2">Invoice Details:</h3>
+              <div className="text-gray-700 space-y-1">
                 <p>
                   <span className="font-semibold">Invoice #:</span> 
                   <span className="ml-2 font-mono text-sm">{order.id}</span>
@@ -381,8 +384,8 @@ export default function InvoiceGenerator({
             </div>
 
             {/* Order Items Table */}
-            <div className="mb-8">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">Order Items:</h3>
+            <div className="mb-6">
+              <h3 className="text-lg font-bold text-gray-900 mb-3">Order Items:</h3>
               <div className="overflow-x-auto">
                 <table className="w-full border-collapse border border-gray-300 rounded-lg overflow-hidden">
                   <thead>
@@ -447,7 +450,7 @@ export default function InvoiceGenerator({
             </div>
 
             {/* Total */}
-            <div className="flex justify-end mb-8">
+            <div className="flex justify-end mb-6">
               <div className="text-right">
                 <div className="flex items-center space-x-4">
                   <span className="text-xl font-bold text-gray-900">Total:</span>
@@ -459,8 +462,8 @@ export default function InvoiceGenerator({
             </div>
 
             {/* Footer */}
-            <div className="mt-8 pt-6 border-t border-gray-300 text-center">
-              <div className="bg-gray-100 rounded-lg p-6">
+            <div className="mt-6 pt-4 border-t border-gray-300 text-center">
+              <div className="bg-gray-100 p-6 rounded-lg">
                 <p className="text-lg font-bold text-gray-900 mb-2">Thank you for your business!</p>
                 <p className="text-gray-600 mb-4">
                   We appreciate your trust in Kload for your electronic needs.
