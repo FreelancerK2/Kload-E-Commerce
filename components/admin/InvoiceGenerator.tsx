@@ -80,8 +80,9 @@ export default function InvoiceGenerator({
           if (element.tagName === 'SCRIPT' || element.tagName === 'STYLE') {
             return true;
           }
-          // Skip elements with oklch colors
-          if (element.style && element.style.color && element.style.color.includes('oklch')) {
+          // Skip elements with oklch colors (cast to HTMLElement to access style property)
+          const htmlElement = element as HTMLElement;
+          if (htmlElement.style && htmlElement.style.color && htmlElement.style.color.includes('oklch')) {
             return true;
           }
           return false;
