@@ -92,41 +92,45 @@ export default function InvoiceGenerator({
             
             /* Invoice container - more compact for single page */
             #invoice-content { 
-              padding: 24px !important; 
+              padding: 32px !important; 
               background: white !important; 
               max-width: 900px !important; 
               margin: 0 auto !important; 
               font-size: 14px !important;
               line-height: 1.4 !important;
+              min-height: 100vh !important;
             }
             
             /* Header styles - more compact */
             .text-center { text-align: center !important; }
-            .mb-10 { margin-bottom: 20px !important; }
-            .mb-8 { margin-bottom: 16px !important; }
-            .mb-6 { margin-bottom: 12px !important; }
-            .mb-4 { margin-bottom: 8px !important; }
-            .mb-3 { margin-bottom: 6px !important; }
-            .mb-2 { margin-bottom: 4px !important; }
-            .mt-8 { margin-top: 16px !important; }
-            .mt-6 { margin-top: 12px !important; }
-            .pt-6 { padding-top: 12px !important; }
-            .pt-4 { padding-top: 8px !important; }
+            .mb-10 { margin-bottom: 24px !important; }
+            .mb-8 { margin-bottom: 20px !important; }
+            .mb-6 { margin-bottom: 16px !important; }
+            .mb-4 { margin-bottom: 12px !important; }
+            .mb-3 { margin-bottom: 8px !important; }
+            .mb-2 { margin-bottom: 6px !important; }
+            .mt-8 { margin-top: 20px !important; }
+            .mt-6 { margin-top: 16px !important; }
+            .pt-6 { padding-top: 16px !important; }
+            .pt-4 { padding-top: 12px !important; }
             
             /* Logo and company name - more compact */
             .w-16 { width: 48px !important; }
             .h-16 { height: 48px !important; }
+            .w-20 { width: 60px !important; }
+            .h-20 { height: 60px !important; }
             .bg-black { background: #000000 !important; }
             .bg-gradient-to-br { background: #000000 !important; }
             .rounded-full { border-radius: 50% !important; }
             .rounded-xl { border-radius: 8px !important; }
             .text-white { color: #ffffff !important; }
             .text-2xl { font-size: 18px !important; }
+            .text-3xl { font-size: 22px !important; }
             .font-bold { font-weight: bold !important; }
             .text-4xl { font-size: 24px !important; }
+            .text-5xl { font-size: 28px !important; }
             .text-lg { font-size: 14px !important; }
             .text-xl { font-size: 16px !important; }
-            .text-3xl { font-size: 20px !important; }
             
             /* Text colors */
             .text-gray-900 { color: #111827 !important; }
@@ -160,16 +164,16 @@ export default function InvoiceGenerator({
             .border-b-2 { border-bottom: 2px solid #d1d5db !important; }
             
             /* Padding and margins - more compact */
-            .p-4 { padding: 8px !important; }
-            .p-6 { padding: 12px !important; }
-            .p-8 { padding: 16px !important; }
-            .px-4 { padding-left: 8px !important; padding-right: 8px !important; }
-            .px-6 { padding-left: 12px !important; padding-right: 12px !important; }
-            .py-1 { padding-top: 2px !important; padding-bottom: 2px !important; }
-            .py-2 { padding-top: 4px !important; padding-bottom: 4px !important; }
-            .py-3 { padding-top: 6px !important; padding-bottom: 6px !important; }
-            .py-4 { padding-top: 8px !important; padding-bottom: 8px !important; }
-            .pb-2 { padding-bottom: 4px !important; }
+            .p-4 { padding: 12px !important; }
+            .p-6 { padding: 16px !important; }
+            .p-8 { padding: 20px !important; }
+            .px-4 { padding-left: 12px !important; padding-right: 12px !important; }
+            .px-6 { padding-left: 16px !important; padding-right: 16px !important; }
+            .py-1 { padding-top: 4px !important; padding-bottom: 4px !important; }
+            .py-2 { padding-top: 6px !important; padding-bottom: 6px !important; }
+            .py-3 { padding-top: 8px !important; padding-bottom: 8px !important; }
+            .py-4 { padding-top: 12px !important; padding-bottom: 12px !important; }
+            .pb-2 { padding-bottom: 6px !important; }
             .space-y-1 > * + * { margin-top: 4px !important; }
             .space-y-2 > * + * { margin-top: 8px !important; }
             
@@ -312,26 +316,26 @@ export default function InvoiceGenerator({
 
         {/* Invoice Content */}
         <div className="overflow-y-auto max-h-[calc(90vh-120px)]">
-          <div id="invoice-content" className="p-6 bg-white max-w-4xl mx-auto">
+          <div id="invoice-content" className="p-8 bg-white max-w-4xl mx-auto min-h-full">
             {/* Company Header */}
-            <div className="text-center mb-8">
-              <div className="flex items-center justify-center mb-4">
-                <div className="w-16 h-16 bg-black rounded-full flex items-center justify-center mr-4">
-                  <span className="text-white font-bold text-2xl">K</span>
+            <div className="text-center mb-10">
+              <div className="flex items-center justify-center mb-6">
+                <div className="w-20 h-20 bg-black rounded-full flex items-center justify-center mr-6 shadow-lg">
+                  <span className="text-white font-bold text-3xl">K</span>
                 </div>
                 <div className="text-left">
-                  <h1 className="text-4xl font-bold text-gray-900">Kload</h1>
-                  <p className="text-lg text-gray-600">Premium E-commerce Store</p>
+                  <h1 className="text-5xl font-bold text-gray-900">Kload</h1>
+                  <p className="text-xl text-gray-600">Premium E-commerce Store</p>
                 </div>
               </div>
-              <div className="bg-gray-100 p-4 rounded-lg">
-                <p className="text-gray-700 font-medium">Your One-Stop Electronic Market</p>
-                <p className="text-sm text-gray-500 mt-1">Quality Electronics • Fast Delivery • 24/7 Support</p>
+              <div className="bg-gray-100 p-6 rounded-lg">
+                <p className="text-gray-700 font-medium text-lg">Your One-Stop Electronic Market</p>
+                <p className="text-sm text-gray-500 mt-2">Quality Electronics • Fast Delivery • 24/7 Support</p>
               </div>
             </div>
 
             {/* Bill To and Invoice Details - Side by Side */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
               {/* Bill To Section */}
               <div>
                 <h3 className="text-lg font-bold text-gray-900 mb-3">Bill To:</h3>
@@ -388,8 +392,8 @@ export default function InvoiceGenerator({
             </div>
 
             {/* Order Items Table */}
-            <div className="mb-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-3">Order Items:</h3>
+            <div className="mb-8">
+              <h3 className="text-lg font-bold text-gray-900 mb-4">Order Items:</h3>
               <div className="overflow-x-auto">
                 <table className="w-full border-collapse border border-gray-300 rounded-lg overflow-hidden">
                   <thead>
@@ -454,7 +458,7 @@ export default function InvoiceGenerator({
             </div>
 
             {/* Total */}
-            <div className="flex justify-end mb-6">
+            <div className="flex justify-end mb-8">
               <div className="text-right">
                 <div className="flex items-center space-x-4">
                   <span className="text-xl font-bold text-gray-900">Total:</span>
@@ -466,7 +470,7 @@ export default function InvoiceGenerator({
             </div>
 
             {/* Footer */}
-            <div className="mt-6 pt-4 border-t border-gray-300 text-center">
+            <div className="mt-8 pt-6 border-t border-gray-300 text-center">
               <div className="bg-gray-100 p-6 rounded-lg">
                 <p className="text-lg font-bold text-gray-900 mb-2">Thank you for your business!</p>
                 <p className="text-gray-600 mb-4">
