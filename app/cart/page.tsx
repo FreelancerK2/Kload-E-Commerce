@@ -13,11 +13,14 @@ import {
   ArrowRight,
 } from 'lucide-react';
 import ProcessedProductImage from '@/components/ProcessedProductImage';
+import { EmptyStates } from '@/components/EmptyState';
+import { useConfirmation } from '@/components/ConfirmationDialog';
 
 export default function CartPage() {
   const { items, removeItem, updateQuantity, getTotal, clearCart } =
     useCartStore();
   const [isUpdating, setIsUpdating] = useState<string | null>(null);
+  const { confirm, ConfirmationDialog } = useConfirmation();
   const [isEditingAddress, setIsEditingAddress] = useState(false);
   const [isAddingNewAddress, setIsAddingNewAddress] = useState(false);
   const [selectedAddressIndex, setSelectedAddressIndex] = useState(0);
@@ -133,22 +136,7 @@ export default function CartPage() {
     return (
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div className="text-center">
-            <ShoppingBag className="h-24 w-24 text-gray-400 mx-auto mb-6" />
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">
-              Your cart is empty
-            </h1>
-            <p className="text-gray-600 mb-8">
-              Looks like you haven't added any items to your cart yet.
-            </p>
-            <Link
-              href="/shop"
-              className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors inline-flex items-center"
-            >
-              <ArrowLeft className="mr-2 h-5 w-5" />
-              Continue Shopping
-            </Link>
-          </div>
+          <EmptyStates.Cart />
         </div>
       </div>
     );
@@ -325,7 +313,13 @@ export default function CartPage() {
               <div className="p-6 border-t border-gray-200">
                 <div className="flex justify-center">
                   <button
-                    onClick={clearCart}
+                    onClick={() => confirm({
+                      title: 'Clear Cart',
+                      message: 'Are you sure you want to remove all items from your cart? This action cannot be undone.',
+                      onConfirm: clearCart,
+                      confirmText: 'Clear Cart',
+                      type: 'danger'
+                    })}
                     className="text-red-600 hover:text-red-800 text-sm font-medium"
                   >
                     Clear Cart
@@ -702,6 +696,7 @@ export default function CartPage() {
           </div>
         </div>
       </div>
+      <ConfirmationDialog />
     </div>
   );
 }

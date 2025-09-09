@@ -31,13 +31,28 @@ export const useCartStore = create<CartStore>()(
 
           // Check stock limit if stockCount is provided
           if (item.stockCount !== undefined && newQuantity > item.stockCount) {
-            console.warn(
-              `Cannot add more items. Stock limit reached: ${item.stockCount}`
-            );
+            // Show toast notification for stock limit
+            if (typeof window !== 'undefined' && (window as any).addToast) {
+              (window as any).addToast({
+                type: 'warning',
+                title: 'Stock Limit Reached',
+                message: `Only ${item.stockCount} items available in stock`,
+                duration: 4000
+              });
+            }
             return state; // Return current state without changes
           }
 
           if (existingItem) {
+            // Show toast for quantity update
+            if (typeof window !== 'undefined' && (window as any).addToast) {
+              (window as any).addToast({
+                type: 'success',
+                title: 'Cart Updated',
+                message: `${item.name} quantity increased to ${newQuantity}`,
+                duration: 3000
+              });
+            }
             return {
               items: state.items.map((i) =>
                 i.id === item.id
@@ -46,13 +61,34 @@ export const useCartStore = create<CartStore>()(
               ),
             };
           }
+          
+          // Show toast for new item added
+          if (typeof window !== 'undefined' && (window as any).addToast) {
+            (window as any).addToast({
+              type: 'success',
+              title: 'Added to Cart',
+              message: `${item.name} has been added to your cart`,
+              duration: 3000
+            });
+          }
           return { items: [...state.items, { ...item, quantity: 1 }] };
         });
       },
       removeItem: (id) => {
-        set((state) => ({
-          items: state.items.filter((item) => item.id !== id),
-        }));
+        set((state) => {
+          const itemToRemove = state.items.find(item => item.id === id);
+          if (itemToRemove && typeof window !== 'undefined' && (window as any).addToast) {
+            (window as any).addToast({
+              type: 'info',
+              title: 'Removed from Cart',
+              message: `${itemToRemove.name} has been removed from your cart`,
+              duration: 3000
+            });
+          }
+          return {
+            items: state.items.filter((item) => item.id !== id),
+          };
+        });
       },
       updateQuantity: (id, quantity) => {
         set((state) => ({

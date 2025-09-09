@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import { ClerkProvider } from '@clerk/nextjs';
 import './globals.css';
 import ConditionalNavbar from '@/components/ConditionalNavbar';
+import ToastContainer from '@/components/Toast';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -41,6 +42,7 @@ export default function RootLayout({
         >
           <ConditionalNavbar />
           {children}
+          <ToastContainer />
         </body>
       </html>
     </ClerkProvider>
