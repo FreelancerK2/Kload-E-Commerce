@@ -205,8 +205,24 @@ export async function POST(request: NextRequest) {
 
     console.log('✅ Order created:', order.id);
 
-    // Create order items
+    // Create order items and update product stock
     for (const item of items) {
+      // Check if product exists and has enough stock
+      const product = await prisma.product.findUnique({
+        where: { id: item.id },
+      });
+
+      if (!product) {
+        console.error(`❌ Product ${item.id} not found`);
+        continue;
+      }
+
+      if (product.stock < item.quantity) {
+        console.error(`❌ Insufficient stock for product ${item.id}. Available: ${product.stock}, Requested: ${item.quantity}`);
+        continue;
+      }
+
+      // Create the order item
       await prisma.orderItem.create({
         data: {
           orderId: order.id,
@@ -215,9 +231,21 @@ export async function POST(request: NextRequest) {
           price: item.price,
         },
       });
+
+      // Update product stock (decrease by quantity ordered)
+      await prisma.product.update({
+        where: { id: item.id },
+        data: {
+          stock: {
+            decrement: item.quantity,
+          },
+        },
+      });
+
+      console.log(`✅ Updated stock for product ${item.id}: ${product.stock} → ${product.stock - item.quantity}`);
     }
 
-    console.log('✅ Order items created for order:', order.id);
+    console.log('✅ Order items created and stock updated for order:', order.id);
 
     return NextResponse.json({
       orderId: order.id,
