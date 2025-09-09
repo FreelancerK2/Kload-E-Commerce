@@ -4,36 +4,59 @@ import { prisma } from '@/lib/prisma';
 // GET - Fetch all orders
 export async function GET(request: NextRequest) {
   try {
+    // Fetch all orders without including products first
     const orders = await prisma.order.findMany({
       include: {
+        items: true,
         user: true,
-        items: {
-          include: {
-            product: true,
-          },
-        },
       },
       orderBy: {
         createdAt: 'desc',
       },
     });
 
+    // For each order, fetch valid items with products
+    const validOrders = [];
+    for (const order of orders) {
+      const validItems = [];
+      for (const item of order.items) {
+        try {
+          const product = await prisma.product.findUnique({
+            where: { id: item.productId }
+          });
+          if (product) {
+            validItems.push({
+              ...item,
+              product: product
+            });
+          }
+        } catch (error) {
+          console.log(`Product ${item.productId} not found, skipping item`);
+        }
+      }
+      
+      if (validItems.length > 0) {
+        validOrders.push({
+          ...order,
+          items: validItems
+        });
+      }
+    }
+
     // Transform orders to match the frontend expected structure
-    const transformedOrders = orders.map((order) => ({
+    const transformedOrders = validOrders.map((order) => ({
       id: order.id,
       stripeSessionId: order.stripeSessionId,
       total: order.total,
       status: order.status,
       createdAt: order.createdAt,
-      items: order.items
-        .filter(item => item.product !== null) // Filter out items with missing products
-        .map((item) => ({
-          id: item.productId,
-          name: item.product?.name || 'Unknown Product',
-          price: item.price,
-          quantity: item.quantity,
-          image: item.product?.images || '', // This is already a JSON string from the database
-        })),
+      items: order.items.map((item) => ({
+        id: item.productId,
+        name: item.product?.name || 'Unknown Product',
+        price: item.price,
+        quantity: item.quantity,
+        image: item.product?.images || '',
+      })),
       user: order.user
         ? {
             firstName: order.user.firstName,
@@ -41,7 +64,7 @@ export async function GET(request: NextRequest) {
             email: order.user.email,
           }
         : null,
-    })).filter(order => order.items.length > 0); // Only include orders with valid items
+    }));
 
     return NextResponse.json({ orders: transformedOrders });
   } catch (error) {
