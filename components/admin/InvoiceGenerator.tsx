@@ -58,20 +58,29 @@ export default function InvoiceGenerator({
   const generatePDF = async () => {
     setIsGenerating(true);
     try {
+      console.log('🔄 Starting PDF generation...');
+      
       const invoiceElement = document.getElementById('invoice-content');
       if (!invoiceElement) {
         throw new Error('Invoice content not found');
       }
+      
+      console.log('✅ Invoice element found:', invoiceElement);
 
       // Create canvas from HTML element
+      console.log('🔄 Creating canvas from HTML...');
       const canvas = await html2canvas(invoiceElement, {
         scale: 2,
         useCORS: true,
         allowTaint: true,
         backgroundColor: '#ffffff',
+        logging: true, // Enable logging for debugging
       });
+      
+      console.log('✅ Canvas created:', canvas.width, 'x', canvas.height);
 
       // Create PDF
+      console.log('🔄 Creating PDF...');
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF('p', 'mm', 'a4');
 
@@ -94,10 +103,13 @@ export default function InvoiceGenerator({
 
       // Download PDF
       const fileName = `invoice-${order.id}-${new Date().toISOString().split('T')[0]}.pdf`;
+      console.log('🔄 Downloading PDF:', fileName);
       pdf.save(fileName);
+      
+      console.log('✅ PDF generated and downloaded successfully!');
     } catch (error) {
-      console.error('Error generating PDF:', error);
-      alert('Failed to generate PDF. Please try again.');
+      console.error('❌ Error generating PDF:', error);
+      alert(`Failed to generate PDF: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setIsGenerating(false);
     }
