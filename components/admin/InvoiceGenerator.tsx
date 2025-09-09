@@ -110,7 +110,7 @@ export default function InvoiceGenerator({
             .w-16 { width: 48px !important; }
             .h-16 { height: 48px !important; }
             .bg-gradient-to-br { background: #000000 !important; }
-            .rounded-xl { border-radius: 8px !important; }
+            .rounded-xl { border-radius: 50% !important; }
             .text-white { color: #ffffff !important; }
             .text-2xl { font-size: 18px !important; }
             .font-bold { font-weight: bold !important; }
@@ -448,10 +448,10 @@ export default function InvoiceGenerator({
             {/* Total */}
             <div className="flex justify-end mb-10">
               <div className="w-80">
-                <div className="bg-gradient-to-r from-gray-100 to-gray-200 rounded-lg p-6 border-2 border-gray-300 shadow-sm">
+                <div className="bg-gradient-to-r from-gray-100 to-gray-200 rounded-lg p-6 shadow-sm">
                   <div className="flex justify-between items-center">
                     <span className="text-2xl font-bold text-gray-900">Total:</span>
-                    <span className="text-3xl font-bold text-gray-900 bg-white px-4 py-2 rounded-lg border-2 border-gray-300">
+                    <span className="text-3xl font-bold text-gray-900 bg-white px-4 py-2 rounded-lg">
                       {formatCurrency(order.total)}
                     </span>
                   </div>
