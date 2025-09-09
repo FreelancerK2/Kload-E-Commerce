@@ -80,57 +80,129 @@ export default function InvoiceGenerator({
           return element.tagName === 'SCRIPT' || element.tagName === 'STYLE';
         },
         onclone: (clonedDoc) => {
-          // Remove all existing stylesheets that might contain oklch colors
-          const existingStyles = clonedDoc.querySelectorAll('style, link[rel="stylesheet"]');
-          existingStyles.forEach(style => style.remove());
-          
-          // Create a comprehensive style override
+          // Create a comprehensive style override that maintains design but uses safe colors
           const style = clonedDoc.createElement('style');
           style.textContent = `
-            * {
-              color: rgb(0, 0, 0) !important;
-              background-color: rgb(255, 255, 255) !important;
-              border-color: rgb(0, 0, 0) !important;
-              background-image: none !important;
-              background: rgb(255, 255, 255) !important;
+            /* Base styles with safe colors */
+            body, html { 
+              font-family: Arial, sans-serif !important; 
+              margin: 0 !important; 
+              padding: 0 !important; 
             }
             
-            /* Override all Tailwind classes with safe colors */
-            .bg-black, .bg-gradient-to-br { background: rgb(0, 0, 0) !important; }
-            .text-white { color: rgb(255, 255, 255) !important; }
-            .text-gray-900 { color: rgb(17, 24, 39) !important; }
-            .text-gray-600 { color: rgb(75, 85, 99) !important; }
-            .text-gray-500 { color: rgb(107, 114, 128) !important; }
-            .text-gray-700 { color: rgb(55, 65, 81) !important; }
-            .border-gray-200 { border-color: rgb(229, 231, 235) !important; }
-            .border-gray-300 { border-color: rgb(209, 213, 219) !important; }
-            .bg-gray-50 { background: rgb(249, 250, 251) !important; }
-            .bg-gray-100 { background: rgb(243, 244, 246) !important; }
-            .bg-gray-200 { background: rgb(229, 231, 235) !important; }
-            .bg-blue-100 { background: rgb(219, 234, 254) !important; }
-            .text-blue-800 { color: rgb(30, 64, 175) !important; }
-            .bg-green-100 { background: rgb(220, 252, 231) !important; }
-            .text-green-800 { color: rgb(22, 101, 52) !important; }
-            .bg-yellow-100 { background: rgb(254, 249, 195) !important; }
-            .text-yellow-800 { color: rgb(133, 77, 14) !important; }
-            .bg-red-100 { background: rgb(254, 226, 226) !important; }
-            .text-red-800 { color: rgb(153, 27, 27) !important; }
-            
-            /* Override gradients with solid colors */
-            .from-black, .to-gray-800, .from-gray-100, .to-gray-200 {
-              background: rgb(243, 244, 246) !important;
+            /* Invoice container */
+            #invoice-content { 
+              padding: 32px !important; 
+              background: white !important; 
+              max-width: 800px !important; 
+              margin: 0 auto !important; 
             }
             
-            /* Ensure all elements use safe colors */
-            div, span, p, h1, h2, h3, h4, h5, h6, td, th, tr, table {
-              color: rgb(0, 0, 0) !important;
-              background-color: rgb(255, 255, 255) !important;
-            }
+            /* Header styles */
+            .text-center { text-align: center !important; }
+            .mb-10 { margin-bottom: 40px !important; }
+            .mb-6 { margin-bottom: 24px !important; }
+            .mb-4 { margin-bottom: 16px !important; }
+            .mb-2 { margin-bottom: 8px !important; }
             
-            /* Specific overrides for invoice elements */
-            #invoice-content * {
-              color: rgb(0, 0, 0) !important;
-              background-color: rgb(255, 255, 255) !important;
+            /* Logo and company name */
+            .w-16 { width: 64px !important; }
+            .h-16 { height: 64px !important; }
+            .bg-gradient-to-br { background: #000000 !important; }
+            .rounded-xl { border-radius: 12px !important; }
+            .text-white { color: #ffffff !important; }
+            .text-2xl { font-size: 24px !important; }
+            .font-bold { font-weight: bold !important; }
+            .text-4xl { font-size: 36px !important; }
+            .text-lg { font-size: 18px !important; }
+            .text-xl { font-size: 20px !important; }
+            .text-3xl { font-size: 30px !important; }
+            
+            /* Text colors */
+            .text-gray-900 { color: #111827 !important; }
+            .text-gray-600 { color: #4b5563 !important; }
+            .text-gray-500 { color: #6b7280 !important; }
+            .text-gray-700 { color: #374151 !important; }
+            
+            /* Background colors */
+            .bg-gray-50 { background: #f9fafb !important; }
+            .bg-gray-100 { background: #f3f4f6 !important; }
+            .bg-gray-200 { background: #e5e7eb !important; }
+            .bg-blue-100 { background: #dbeafe !important; }
+            .bg-green-100 { background: #dcfce7 !important; }
+            .bg-yellow-100 { background: #fef3c7 !important; }
+            .bg-red-100 { background: #fee2e2 !important; }
+            
+            /* Text colors for badges */
+            .text-blue-800 { color: #1e40af !important; }
+            .text-green-800 { color: #166534 !important; }
+            .text-yellow-800 { color: #854d0e !important; }
+            .text-red-800 { color: #991b1b !important; }
+            
+            /* Borders */
+            .border { border: 1px solid #d1d5db !important; }
+            .border-2 { border: 2px solid #d1d5db !important; }
+            .border-gray-200 { border-color: #e5e7eb !important; }
+            .border-gray-300 { border-color: #d1d5db !important; }
+            .border-t { border-top: 1px solid #d1d5db !important; }
+            .border-t-2 { border-top: 2px solid #d1d5db !important; }
+            .border-b { border-bottom: 1px solid #d1d5db !important; }
+            .border-b-2 { border-bottom: 2px solid #d1d5db !important; }
+            
+            /* Padding and margins */
+            .p-4 { padding: 16px !important; }
+            .p-6 { padding: 24px !important; }
+            .p-8 { padding: 32px !important; }
+            .px-4 { padding-left: 16px !important; padding-right: 16px !important; }
+            .px-6 { padding-left: 24px !important; padding-right: 24px !important; }
+            .py-1 { padding-top: 4px !important; padding-bottom: 4px !important; }
+            .py-2 { padding-top: 8px !important; padding-bottom: 8px !important; }
+            .py-3 { padding-top: 12px !important; padding-bottom: 12px !important; }
+            .py-4 { padding-top: 16px !important; padding-bottom: 16px !important; }
+            .pb-2 { padding-bottom: 8px !important; }
+            
+            /* Layout */
+            .grid { display: grid !important; }
+            .grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)) !important; }
+            .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+            .gap-8 { gap: 32px !important; }
+            .flex { display: flex !important; }
+            .items-center { align-items: center !important; }
+            .justify-center { justify-content: center !important; }
+            .justify-end { justify-content: flex-end !important; }
+            .justify-between { justify-content: space-between !important; }
+            .space-x-4 > * + * { margin-left: 16px !important; }
+            .space-x-8 > * + * { margin-left: 32px !important; }
+            .space-y-2 > * + * { margin-top: 8px !important; }
+            .text-left { text-align: left !important; }
+            .text-right { text-align: right !important; }
+            .text-center { text-align: center !important; }
+            
+            /* Table styles */
+            .w-full { width: 100% !important; }
+            .border-collapse { border-collapse: collapse !important; }
+            .overflow-x-auto { overflow-x: auto !important; }
+            .rounded-lg { border-radius: 8px !important; }
+            .shadow-sm { box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important; }
+            
+            /* Image styles */
+            .w-16 { width: 64px !important; }
+            .h-16 { height: 64px !important; }
+            .object-cover { object-fit: cover !important; }
+            .rounded-lg { border-radius: 8px !important; }
+            
+            /* Badge styles */
+            .rounded-full { border-radius: 9999px !important; }
+            .px-3 { padding-left: 12px !important; padding-right: 12px !important; }
+            .px-4 { padding-left: 16px !important; padding-right: 16px !important; }
+            .text-sm { font-size: 14px !important; }
+            .font-semibold { font-weight: 600 !important; }
+            .font-medium { font-weight: 500 !important; }
+            
+            /* Specific overrides to prevent oklch */
+            * { 
+              background-image: none !important; 
+              background: inherit !important; 
             }
           `;
           clonedDoc.head.appendChild(style);
