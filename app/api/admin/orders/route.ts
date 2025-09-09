@@ -25,13 +25,15 @@ export async function GET(request: NextRequest) {
       total: order.total,
       status: order.status,
       createdAt: order.createdAt,
-      items: order.items.map((item) => ({
-        id: item.productId,
-        name: item.product.name,
-        price: item.price,
-        quantity: item.quantity,
-        image: item.product.images, // This is already a JSON string from the database
-      })),
+      items: order.items
+        .filter(item => item.product !== null) // Filter out items with missing products
+        .map((item) => ({
+          id: item.productId,
+          name: item.product?.name || 'Unknown Product',
+          price: item.price,
+          quantity: item.quantity,
+          image: item.product?.images || '', // This is already a JSON string from the database
+        })),
       user: order.user
         ? {
             firstName: order.user.firstName,
@@ -39,7 +41,7 @@ export async function GET(request: NextRequest) {
             email: order.user.email,
           }
         : null,
-    }));
+    })).filter(order => order.items.length > 0); // Only include orders with valid items
 
     return NextResponse.json({ orders: transformedOrders });
   } catch (error) {
