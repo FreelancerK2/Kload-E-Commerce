@@ -129,6 +129,8 @@ function SuccessPageContent() {
 
     setDownloading(true);
     try {
+      console.log('🔄 Starting order receipt download...');
+      
       // Create order information as text
       const orderInfo = generateOrderText(order);
 
@@ -143,6 +145,8 @@ function SuccessPageContent() {
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
 
+      console.log('✅ Order receipt downloaded successfully!');
+
       // Show success notification
       setTimeout(() => {
         setDownloadPopupMessage('Order receipt downloaded successfully!');
@@ -152,9 +156,9 @@ function SuccessPageContent() {
         setTimeout(() => setPopupAnimation(true), 10);
       }, 100);
     } catch (error) {
-      console.error('Error downloading order info:', error);
+      console.error('❌ Error downloading order info:', error);
       setDownloadPopupMessage(
-        'Failed to download order receipt. Please try again.'
+        `Failed to download order receipt: ${error instanceof Error ? error.message : 'Unknown error'}`
       );
       setDownloadPopupType('error');
       setShowDownloadPopup(true);
