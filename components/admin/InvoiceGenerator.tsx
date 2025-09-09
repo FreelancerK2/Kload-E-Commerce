@@ -75,6 +75,28 @@ export default function InvoiceGenerator({
         allowTaint: true,
         backgroundColor: '#ffffff',
         logging: true, // Enable logging for debugging
+        ignoreElements: (element) => {
+          // Skip elements that might cause color parsing issues
+          return element.tagName === 'SCRIPT' || element.tagName === 'STYLE';
+        },
+        onclone: (clonedDoc) => {
+          // Convert oklch colors to hex/rgb in the cloned document
+          const style = clonedDoc.createElement('style');
+          style.textContent = `
+            * {
+              color: rgb(0, 0, 0) !important;
+              background-color: rgb(255, 255, 255) !important;
+              border-color: rgb(0, 0, 0) !important;
+            }
+            .bg-black { background-color: rgb(0, 0, 0) !important; }
+            .text-white { color: rgb(255, 255, 255) !important; }
+            .text-gray-900 { color: rgb(17, 24, 39) !important; }
+            .text-gray-600 { color: rgb(75, 85, 99) !important; }
+            .border-gray-200 { border-color: rgb(229, 231, 235) !important; }
+            .bg-gray-50 { background-color: rgb(249, 250, 251) !important; }
+          `;
+          clonedDoc.head.appendChild(style);
+        }
       });
       
       console.log('✅ Canvas created:', canvas.width, 'x', canvas.height);
