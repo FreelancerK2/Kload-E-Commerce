@@ -92,7 +92,7 @@ export default function InvoiceGenerator({
             
             /* Invoice container - more compact for single page */
             #invoice-content { 
-              padding: 32px !important; 
+              padding: 24px !important; 
               background: white !important; 
               max-width: 900px !important; 
               margin: 0 auto !important; 
@@ -102,16 +102,16 @@ export default function InvoiceGenerator({
             
             /* Header styles - more compact */
             .text-center { text-align: center !important; }
-            .mb-10 { margin-bottom: 24px !important; }
-            .mb-8 { margin-bottom: 20px !important; }
-            .mb-6 { margin-bottom: 16px !important; }
-            .mb-4 { margin-bottom: 12px !important; }
-            .mb-3 { margin-bottom: 8px !important; }
-            .mb-2 { margin-bottom: 6px !important; }
-            .mt-8 { margin-top: 20px !important; }
-            .mt-6 { margin-top: 16px !important; }
-            .pt-6 { padding-top: 16px !important; }
-            .pt-4 { padding-top: 12px !important; }
+            .mb-10 { margin-bottom: 20px !important; }
+            .mb-8 { margin-bottom: 16px !important; }
+            .mb-6 { margin-bottom: 12px !important; }
+            .mb-4 { margin-bottom: 8px !important; }
+            .mb-3 { margin-bottom: 6px !important; }
+            .mb-2 { margin-bottom: 4px !important; }
+            .mt-8 { margin-top: 16px !important; }
+            .mt-6 { margin-top: 12px !important; }
+            .pt-6 { padding-top: 12px !important; }
+            .pt-4 { padding-top: 8px !important; }
             
             /* Logo and company name - more compact */
             .w-16 { width: 48px !important; }
@@ -160,16 +160,16 @@ export default function InvoiceGenerator({
             .border-b-2 { border-bottom: 2px solid #d1d5db !important; }
             
             /* Padding and margins - more compact */
-            .p-4 { padding: 12px !important; }
-            .p-6 { padding: 16px !important; }
-            .p-8 { padding: 20px !important; }
-            .px-4 { padding-left: 12px !important; padding-right: 12px !important; }
-            .px-6 { padding-left: 16px !important; padding-right: 16px !important; }
-            .py-1 { padding-top: 4px !important; padding-bottom: 4px !important; }
-            .py-2 { padding-top: 6px !important; padding-bottom: 6px !important; }
-            .py-3 { padding-top: 8px !important; padding-bottom: 8px !important; }
-            .py-4 { padding-top: 12px !important; padding-bottom: 12px !important; }
-            .pb-2 { padding-bottom: 6px !important; }
+            .p-4 { padding: 8px !important; }
+            .p-6 { padding: 12px !important; }
+            .p-8 { padding: 16px !important; }
+            .px-4 { padding-left: 8px !important; padding-right: 8px !important; }
+            .px-6 { padding-left: 12px !important; padding-right: 12px !important; }
+            .py-1 { padding-top: 2px !important; padding-bottom: 2px !important; }
+            .py-2 { padding-top: 4px !important; padding-bottom: 4px !important; }
+            .py-3 { padding-top: 6px !important; padding-bottom: 6px !important; }
+            .py-4 { padding-top: 8px !important; padding-bottom: 8px !important; }
+            .pb-2 { padding-bottom: 4px !important; }
             .space-y-1 > * + * { margin-top: 4px !important; }
             .space-y-2 > * + * { margin-top: 8px !important; }
             
@@ -312,10 +312,10 @@ export default function InvoiceGenerator({
 
         {/* Invoice Content */}
         <div className="overflow-y-auto max-h-[calc(90vh-120px)]">
-          <div id="invoice-content" className="p-8 bg-white max-w-4xl mx-auto">
+          <div id="invoice-content" className="p-6 bg-white max-w-4xl mx-auto">
             {/* Company Header */}
-            <div className="text-center mb-10">
-              <div className="flex items-center justify-center mb-6">
+            <div className="text-center mb-8">
+              <div className="flex items-center justify-center mb-4">
                 <div className="w-16 h-16 bg-black rounded-full flex items-center justify-center mr-4">
                   <span className="text-white font-bold text-2xl">K</span>
                 </div>
@@ -330,63 +330,66 @@ export default function InvoiceGenerator({
               </div>
             </div>
 
-            {/* Bill To Section */}
-            <div className="mb-8">
-              <h3 className="text-lg font-bold text-gray-900 mb-3">Bill To:</h3>
-              {order.user ? (
-                <div className="text-gray-700">
-                  <p className="font-semibold text-lg">
-                    {order.user.firstName} {order.user.lastName}
-                  </p>
-                  <p className="text-gray-600">{order.user.email}</p>
-                </div>
-              ) : (
-                <p className="text-gray-500 font-medium">Guest Customer</p>
-              )}
-            </div>
-
-            {/* Invoice Details Section */}
-            <div className="mb-8">
-              <h3 className="text-lg font-bold text-gray-900 mb-3">Invoice Details:</h3>
-              <div className="text-gray-700 space-y-2">
-                <p>
-                  <span className="font-semibold">Invoice #:</span> 
-                  <span className="ml-2 font-mono text-sm">{order.id}</span>
-                </p>
-                <p>
-                  <span className="font-semibold">Date:</span>{' '}
-                  <span className="ml-2">{formatDate(order.createdAt)}</span>
-                </p>
-                <p className="flex items-center">
-                  <span className="font-semibold">Status:</span>
-                  <span
-                    className={`ml-2 px-3 py-1 rounded-full text-sm font-bold ${
-                      order.status === 'PAID'
-                        ? 'bg-green-100 text-green-800'
-                        : order.status === 'PENDING'
-                          ? 'bg-yellow-100 text-yellow-800'
-                          : order.status === 'SHIPPED'
-                            ? 'bg-blue-100 text-blue-800'
-                            : order.status === 'DELIVERED'
-                              ? 'bg-green-100 text-green-800'
-                              : 'bg-red-100 text-red-800'
-                    }`}
-                  >
-                    {order.status}
-                  </span>
-                </p>
-                {order.stripeSessionId && (
-                  <p>
-                    <span className="font-semibold">Payment ID:</span>{' '}
-                    <span className="ml-2 font-mono text-sm">{order.stripeSessionId}</span>
-                  </p>
+            {/* Bill To and Invoice Details - Side by Side */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              {/* Bill To Section */}
+              <div>
+                <h3 className="text-lg font-bold text-gray-900 mb-3">Bill To:</h3>
+                {order.user ? (
+                  <div className="text-gray-700">
+                    <p className="font-semibold text-lg">
+                      {order.user.firstName} {order.user.lastName}
+                    </p>
+                    <p className="text-gray-600">{order.user.email}</p>
+                  </div>
+                ) : (
+                  <p className="text-gray-500 font-medium">Guest Customer</p>
                 )}
+              </div>
+
+              {/* Invoice Details Section */}
+              <div>
+                <h3 className="text-lg font-bold text-gray-900 mb-3">Invoice Details:</h3>
+                <div className="text-gray-700 space-y-2">
+                  <p>
+                    <span className="font-semibold">Invoice #:</span> 
+                    <span className="ml-2 font-mono text-sm">{order.id}</span>
+                  </p>
+                  <p>
+                    <span className="font-semibold">Date:</span>{' '}
+                    <span className="ml-2">{formatDate(order.createdAt)}</span>
+                  </p>
+                  <p className="flex items-center">
+                    <span className="font-semibold">Status:</span>
+                    <span
+                      className={`ml-2 px-3 py-1 rounded-full text-sm font-bold ${
+                        order.status === 'PAID'
+                          ? 'bg-green-100 text-green-800'
+                          : order.status === 'PENDING'
+                            ? 'bg-yellow-100 text-yellow-800'
+                            : order.status === 'SHIPPED'
+                              ? 'bg-blue-100 text-blue-800'
+                              : order.status === 'DELIVERED'
+                                ? 'bg-green-100 text-green-800'
+                                : 'bg-red-100 text-red-800'
+                      }`}
+                    >
+                      {order.status}
+                    </span>
+                  </p>
+                  {order.stripeSessionId && (
+                    <p>
+                      <span className="font-semibold">Payment ID:</span>{' '}
+                      <span className="ml-2 font-mono text-sm">{order.stripeSessionId}</span>
+                    </p>
+                  )}
+                </div>
               </div>
             </div>
 
             {/* Order Items Table */}
-            <div className="mb-8">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">Order Items:</h3>
+            <div className="mb-6">
+              <h3 className="text-lg font-bold text-gray-900 mb-3">Order Items:</h3>
               <div className="overflow-x-auto">
                 <table className="w-full border-collapse border border-gray-300 rounded-lg overflow-hidden">
                   <thead>
@@ -451,7 +454,7 @@ export default function InvoiceGenerator({
             </div>
 
             {/* Total */}
-            <div className="flex justify-end mb-8">
+            <div className="flex justify-end mb-6">
               <div className="text-right">
                 <div className="flex items-center space-x-4">
                   <span className="text-xl font-bold text-gray-900">Total:</span>
@@ -463,7 +466,7 @@ export default function InvoiceGenerator({
             </div>
 
             {/* Footer */}
-            <div className="mt-8 pt-6 border-t border-gray-300 text-center">
+            <div className="mt-6 pt-4 border-t border-gray-300 text-center">
               <div className="bg-gray-100 p-6 rounded-lg">
                 <p className="text-lg font-bold text-gray-900 mb-2">Thank you for your business!</p>
                 <p className="text-gray-600 mb-4">
