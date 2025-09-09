@@ -90,33 +90,34 @@ export default function InvoiceGenerator({
               padding: 0 !important; 
             }
             
-            /* Invoice container */
+            /* Invoice container - more compact for single page */
             #invoice-content { 
-              padding: 32px !important; 
+              padding: 20px !important; 
               background: white !important; 
               max-width: 800px !important; 
               margin: 0 auto !important; 
+              font-size: 14px !important;
             }
             
-            /* Header styles */
+            /* Header styles - more compact */
             .text-center { text-align: center !important; }
-            .mb-10 { margin-bottom: 40px !important; }
-            .mb-6 { margin-bottom: 24px !important; }
-            .mb-4 { margin-bottom: 16px !important; }
-            .mb-2 { margin-bottom: 8px !important; }
+            .mb-10 { margin-bottom: 20px !important; }
+            .mb-6 { margin-bottom: 12px !important; }
+            .mb-4 { margin-bottom: 8px !important; }
+            .mb-2 { margin-bottom: 4px !important; }
             
-            /* Logo and company name */
-            .w-16 { width: 64px !important; }
-            .h-16 { height: 64px !important; }
+            /* Logo and company name - more compact */
+            .w-16 { width: 48px !important; }
+            .h-16 { height: 48px !important; }
             .bg-gradient-to-br { background: #000000 !important; }
-            .rounded-xl { border-radius: 12px !important; }
+            .rounded-xl { border-radius: 8px !important; }
             .text-white { color: #ffffff !important; }
-            .text-2xl { font-size: 24px !important; }
+            .text-2xl { font-size: 18px !important; }
             .font-bold { font-weight: bold !important; }
-            .text-4xl { font-size: 36px !important; }
-            .text-lg { font-size: 18px !important; }
-            .text-xl { font-size: 20px !important; }
-            .text-3xl { font-size: 30px !important; }
+            .text-4xl { font-size: 24px !important; }
+            .text-lg { font-size: 14px !important; }
+            .text-xl { font-size: 16px !important; }
+            .text-3xl { font-size: 20px !important; }
             
             /* Text colors */
             .text-gray-900 { color: #111827 !important; }
@@ -149,17 +150,17 @@ export default function InvoiceGenerator({
             .border-b { border-bottom: 1px solid #d1d5db !important; }
             .border-b-2 { border-bottom: 2px solid #d1d5db !important; }
             
-            /* Padding and margins */
-            .p-4 { padding: 16px !important; }
-            .p-6 { padding: 24px !important; }
-            .p-8 { padding: 32px !important; }
-            .px-4 { padding-left: 16px !important; padding-right: 16px !important; }
-            .px-6 { padding-left: 24px !important; padding-right: 24px !important; }
-            .py-1 { padding-top: 4px !important; padding-bottom: 4px !important; }
-            .py-2 { padding-top: 8px !important; padding-bottom: 8px !important; }
-            .py-3 { padding-top: 12px !important; padding-bottom: 12px !important; }
-            .py-4 { padding-top: 16px !important; padding-bottom: 16px !important; }
-            .pb-2 { padding-bottom: 8px !important; }
+            /* Padding and margins - more compact */
+            .p-4 { padding: 8px !important; }
+            .p-6 { padding: 12px !important; }
+            .p-8 { padding: 16px !important; }
+            .px-4 { padding-left: 8px !important; padding-right: 8px !important; }
+            .px-6 { padding-left: 12px !important; padding-right: 12px !important; }
+            .py-1 { padding-top: 2px !important; padding-bottom: 2px !important; }
+            .py-2 { padding-top: 4px !important; padding-bottom: 4px !important; }
+            .py-3 { padding-top: 6px !important; padding-bottom: 6px !important; }
+            .py-4 { padding-top: 8px !important; padding-bottom: 8px !important; }
+            .pb-2 { padding-bottom: 4px !important; }
             
             /* Layout */
             .grid { display: grid !important; }
@@ -185,11 +186,11 @@ export default function InvoiceGenerator({
             .rounded-lg { border-radius: 8px !important; }
             .shadow-sm { box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important; }
             
-            /* Image styles */
-            .w-16 { width: 64px !important; }
-            .h-16 { height: 64px !important; }
+            /* Image styles - more compact */
+            .w-16 { width: 40px !important; }
+            .h-16 { height: 40px !important; }
             .object-cover { object-fit: cover !important; }
-            .rounded-lg { border-radius: 8px !important; }
+            .rounded-lg { border-radius: 4px !important; }
             
             /* Badge styles */
             .rounded-full { border-radius: 9999px !important; }
@@ -211,27 +212,31 @@ export default function InvoiceGenerator({
       
       console.log('✅ Canvas created:', canvas.width, 'x', canvas.height);
 
-      // Create PDF
+      // Create PDF - Force single page
       console.log('🔄 Creating PDF...');
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF('p', 'mm', 'a4');
 
-      const imgWidth = 210;
-      const pageHeight = 295;
+      const imgWidth = 210; // A4 width in mm
+      const pageHeight = 295; // A4 height in mm
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      let heightLeft = imgHeight;
-
-      let position = 0;
-
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
-
-      while (heightLeft >= 0) {
-        position = heightLeft - imgHeight;
-        pdf.addPage();
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
+      
+      // Scale down the image to fit on one page if it's too tall
+      let finalWidth = imgWidth;
+      let finalHeight = imgHeight;
+      
+      if (imgHeight > pageHeight) {
+        // Scale down proportionally to fit on one page
+        const scale = pageHeight / imgHeight;
+        finalHeight = pageHeight;
+        finalWidth = imgWidth * scale;
       }
+
+      // Center the image on the page
+      const xOffset = (imgWidth - finalWidth) / 2;
+      const yOffset = (pageHeight - finalHeight) / 2;
+
+      pdf.addImage(imgData, 'PNG', xOffset, yOffset, finalWidth, finalHeight);
 
       // Download PDF
       const fileName = `invoice-${order.id}-${new Date().toISOString().split('T')[0]}.pdf`;
@@ -423,7 +428,7 @@ export default function InvoiceGenerator({
                           </td>
                           <td className="border-2 border-gray-300 px-6 py-4 text-center">
                             <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full font-bold text-lg">
-                              {item.quantity}
+                            {item.quantity}
                             </span>
                           </td>
                           <td className="border-2 border-gray-300 px-6 py-4 text-right text-gray-700 font-semibold text-lg">
