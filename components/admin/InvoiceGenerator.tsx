@@ -92,44 +92,50 @@ export default function InvoiceGenerator({
             
             /* Invoice container - more compact for single page */
             #invoice-content { 
-              padding: 24px !important; 
+              padding: 20px !important; 
               background: white !important; 
               max-width: 800px !important; 
               margin: 0 auto !important; 
-              font-size: 14px !important;
-              line-height: 1.4 !important;
+              font-size: 12px !important;
+              line-height: 1.3 !important;
             }
             
             /* Header styles - more compact */
             .text-center { text-align: center !important; }
-            .mb-10 { margin-bottom: 20px !important; }
-            .mb-8 { margin-bottom: 16px !important; }
-            .mb-6 { margin-bottom: 12px !important; }
-            .mb-4 { margin-bottom: 8px !important; }
-            .mb-3 { margin-bottom: 6px !important; }
-            .mb-2 { margin-bottom: 4px !important; }
-            .mt-8 { margin-top: 16px !important; }
-            .mt-6 { margin-top: 12px !important; }
-            .pt-6 { padding-top: 12px !important; }
-            .pt-4 { padding-top: 8px !important; }
+            .mb-10 { margin-bottom: 16px !important; }
+            .mb-8 { margin-bottom: 12px !important; }
+            .mb-6 { margin-bottom: 10px !important; }
+            .mb-5 { margin-bottom: 8px !important; }
+            .mb-4 { margin-bottom: 6px !important; }
+            .mb-3 { margin-bottom: 4px !important; }
+            .mb-2 { margin-bottom: 3px !important; }
+            .mb-1 { margin-bottom: 2px !important; }
+            .mt-8 { margin-top: 12px !important; }
+            .mt-6 { margin-top: 10px !important; }
+            .mt-5 { margin-top: 8px !important; }
+            .pt-6 { padding-top: 10px !important; }
+            .pt-4 { padding-top: 6px !important; }
+            .pt-3 { padding-top: 4px !important; }
             
             /* Logo and company name - more compact */
-            .w-16 { width: 40px !important; }
-            .h-16 { height: 40px !important; }
-            .w-20 { width: 50px !important; }
-            .h-20 { height: 50px !important; }
+            .w-12 { width: 32px !important; }
+            .h-12 { height: 32px !important; }
+            .w-16 { width: 36px !important; }
+            .h-16 { height: 36px !important; }
+            .w-20 { width: 40px !important; }
+            .h-20 { height: 40px !important; }
             .bg-black { background: #000000 !important; }
             .bg-gradient-to-br { background: #000000 !important; }
             .rounded-full { border-radius: 50% !important; }
-            .rounded-xl { border-radius: 8px !important; }
+            .rounded-xl { border-radius: 6px !important; }
             .text-white { color: #ffffff !important; }
+            .text-lg { font-size: 12px !important; }
+            .text-xl { font-size: 14px !important; }
             .text-2xl { font-size: 16px !important; }
             .text-3xl { font-size: 18px !important; }
             .font-bold { font-weight: bold !important; }
             .text-4xl { font-size: 20px !important; }
             .text-5xl { font-size: 22px !important; }
-            .text-lg { font-size: 12px !important; }
-            .text-xl { font-size: 14px !important; }
             
             /* Text colors */
             .text-gray-900 { color: #111827 !important; }
@@ -163,18 +169,20 @@ export default function InvoiceGenerator({
             .border-b-2 { border-bottom: 2px solid #d1d5db !important; }
             
             /* Padding and margins - more compact */
+            .p-3 { padding: 6px !important; }
             .p-4 { padding: 8px !important; }
-            .p-6 { padding: 12px !important; }
-            .p-8 { padding: 16px !important; }
+            .p-6 { padding: 10px !important; }
+            .p-8 { padding: 12px !important; }
+            .px-3 { padding-left: 6px !important; padding-right: 6px !important; }
             .px-4 { padding-left: 8px !important; padding-right: 8px !important; }
-            .px-6 { padding-left: 12px !important; padding-right: 12px !important; }
+            .px-6 { padding-left: 10px !important; padding-right: 10px !important; }
             .py-1 { padding-top: 2px !important; padding-bottom: 2px !important; }
-            .py-2 { padding-top: 4px !important; padding-bottom: 4px !important; }
-            .py-3 { padding-top: 6px !important; padding-bottom: 6px !important; }
-            .py-4 { padding-top: 8px !important; padding-bottom: 8px !important; }
-            .pb-2 { padding-bottom: 4px !important; }
+            .py-2 { padding-top: 3px !important; padding-bottom: 3px !important; }
+            .py-3 { padding-top: 4px !important; padding-bottom: 4px !important; }
+            .py-4 { padding-top: 6px !important; padding-bottom: 6px !important; }
+            .pb-2 { padding-bottom: 3px !important; }
             .space-y-1 > * + * { margin-top: 2px !important; }
-            .space-y-2 > * + * { margin-top: 4px !important; }
+            .space-y-2 > * + * { margin-top: 3px !important; }
             
             /* Layout */
             .grid { display: grid !important; }
@@ -315,57 +323,57 @@ export default function InvoiceGenerator({
 
         {/* Invoice Content */}
         <div className="overflow-y-auto max-h-[calc(90vh-120px)]">
-          <div id="invoice-content" className="p-8 bg-white max-w-4xl mx-auto min-h-full">
+          <div id="invoice-content" className="p-6 bg-white max-w-4xl mx-auto">
             {/* Company Header */}
-            <div className="text-center mb-8">
-              <div className="flex items-center justify-center mb-4">
-                <div className="w-16 h-16 bg-black rounded-full flex items-center justify-center mr-4">
-                  <span className="text-white font-bold text-2xl">K</span>
+            <div className="text-center mb-6">
+              <div className="flex items-center justify-center mb-3">
+                <div className="w-12 h-12 bg-black rounded-full flex items-center justify-center mr-3">
+                  <span className="text-white font-bold text-lg">K</span>
                 </div>
                 <div className="text-left">
-                  <h1 className="text-4xl font-bold text-gray-900">Kload</h1>
-                  <p className="text-lg text-gray-600">Premium E-commerce Store</p>
+                  <h1 className="text-3xl font-bold text-gray-900">Kload</h1>
+                  <p className="text-base text-gray-600">Premium E-commerce Store</p>
                 </div>
               </div>
-              <div className="bg-gray-100 p-4 rounded-lg">
-                <p className="text-gray-700 font-medium">Your One-Stop Electronic Market</p>
-                <p className="text-sm text-gray-500 mt-1">Quality Electronics • Fast Delivery • 24/7 Support</p>
+              <div className="bg-gray-100 p-3 rounded-lg">
+                <p className="text-gray-700 font-medium text-sm">Your One-Stop Electronic Market</p>
+                <p className="text-xs text-gray-500 mt-1">Quality Electronics • Fast Delivery • 24/7 Support</p>
               </div>
             </div>
 
             {/* Bill To and Invoice Details - Side by Side */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-5">
               {/* Bill To Section */}
               <div>
-                <h3 className="text-lg font-bold text-gray-900 mb-3">Bill To:</h3>
+                <h3 className="text-base font-bold text-gray-900 mb-2">Bill To:</h3>
                 {order.user ? (
                   <div className="text-gray-700">
-                    <p className="font-semibold text-lg">
+                    <p className="font-semibold text-base">
                       {order.user.firstName} {order.user.lastName}
                     </p>
-                    <p className="text-gray-600">{order.user.email}</p>
+                    <p className="text-gray-600 text-sm">{order.user.email}</p>
                   </div>
                 ) : (
-                  <p className="text-gray-500 font-medium">Guest Customer</p>
+                  <p className="text-gray-500 font-medium text-sm">Guest Customer</p>
                 )}
               </div>
 
               {/* Invoice Details Section */}
               <div>
-                <h3 className="text-lg font-bold text-gray-900 mb-3">Invoice Details:</h3>
-                <div className="text-gray-700 space-y-2">
-                  <p>
+                <h3 className="text-base font-bold text-gray-900 mb-2">Invoice Details:</h3>
+                <div className="text-gray-700 space-y-1">
+                  <p className="text-sm">
                     <span className="font-semibold">Invoice #:</span> 
-                    <span className="ml-2 font-mono text-sm">{order.id}</span>
+                    <span className="ml-2 font-mono text-xs">{order.id}</span>
                   </p>
-                  <p>
+                  <p className="text-sm">
                     <span className="font-semibold">Date:</span>{' '}
                     <span className="ml-2">{formatDate(order.createdAt)}</span>
                   </p>
-                  <p className="flex items-center">
+                  <p className="flex items-center text-sm">
                     <span className="font-semibold">Status:</span>
                     <span
-                      className={`ml-2 px-3 py-1 rounded-full text-sm font-bold ${
+                      className={`ml-2 px-2 py-1 rounded text-xs font-bold ${
                         order.status === 'PAID'
                           ? 'bg-green-100 text-green-800'
                           : order.status === 'PENDING'
@@ -381,9 +389,9 @@ export default function InvoiceGenerator({
                     </span>
                   </p>
                   {order.stripeSessionId && (
-                    <p>
+                    <p className="text-sm">
                       <span className="font-semibold">Payment ID:</span>{' '}
-                      <span className="ml-2 font-mono text-sm">{order.stripeSessionId}</span>
+                      <span className="ml-2 font-mono text-xs">{order.stripeSessionId}</span>
                     </p>
                   )}
                 </div>
@@ -391,22 +399,22 @@ export default function InvoiceGenerator({
             </div>
 
             {/* Order Items Table */}
-            <div className="mb-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-3">Order Items:</h3>
+            <div className="mb-5">
+              <h3 className="text-base font-bold text-gray-900 mb-2">Order Items:</h3>
               <div className="overflow-x-auto">
                 <table className="w-full border-collapse border border-gray-300 rounded-lg overflow-hidden">
                   <thead>
                     <tr className="bg-gray-100">
-                      <th className="border border-gray-300 px-4 py-3 text-left text-sm font-bold text-gray-900">
+                      <th className="border border-gray-300 px-3 py-2 text-left text-xs font-bold text-gray-900">
                         Product
                       </th>
-                      <th className="border border-gray-300 px-4 py-3 text-center text-sm font-bold text-gray-900">
+                      <th className="border border-gray-300 px-3 py-2 text-center text-xs font-bold text-gray-900">
                         Quantity
                       </th>
-                      <th className="border border-gray-300 px-4 py-3 text-right text-sm font-bold text-gray-900">
+                      <th className="border border-gray-300 px-3 py-2 text-right text-xs font-bold text-gray-900">
                         Unit Price
                       </th>
-                      <th className="border border-gray-300 px-4 py-3 text-right text-sm font-bold text-gray-900">
+                      <th className="border border-gray-300 px-3 py-2 text-right text-xs font-bold text-gray-900">
                         Total
                       </th>
                     </tr>
@@ -416,8 +424,8 @@ export default function InvoiceGenerator({
                       const firstImage = getFirstImage(item.image);
                       return (
                         <tr key={item.id} className="bg-white">
-                          <td className="border border-gray-300 px-4 py-3">
-                            <div className="flex items-center space-x-3">
+                          <td className="border border-gray-300 px-3 py-2">
+                            <div className="flex items-center space-x-2">
                               {firstImage && (
                                 <img
                                   src={
@@ -426,26 +434,26 @@ export default function InvoiceGenerator({
                                       : `data:image/jpeg;base64,${firstImage}`
                                   }
                                   alt={item.name}
-                                  className="w-12 h-12 object-cover rounded border border-gray-200"
+                                  className="w-8 h-8 object-cover rounded border border-gray-200"
                                 />
                               )}
                               <div>
-                                <p className="font-bold text-gray-900">
+                                <p className="font-semibold text-gray-900 text-sm">
                                   {item.name}
                                 </p>
-                                <p className="text-sm text-gray-500">Premium Quality Product</p>
+                                <p className="text-xs text-gray-500">Premium Quality Product</p>
                               </div>
                             </div>
                           </td>
-                          <td className="border border-gray-300 px-4 py-3 text-center">
-                            <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm font-bold">
+                          <td className="border border-gray-300 px-3 py-2 text-center">
+                            <span className="bg-gray-100 text-gray-800 px-2 py-1 rounded text-xs font-semibold">
                               {item.quantity}
                             </span>
                           </td>
-                          <td className="border border-gray-300 px-4 py-3 text-right text-gray-700 font-semibold">
+                          <td className="border border-gray-300 px-3 py-2 text-right font-semibold text-gray-900 text-sm">
                             {formatCurrency(item.price)}
                           </td>
-                          <td className="border border-gray-300 px-4 py-3 text-right font-bold text-gray-900">
+                          <td className="border border-gray-300 px-3 py-2 text-right font-bold text-gray-900 text-sm">
                             {formatCurrency(item.price * item.quantity)}
                           </td>
                         </tr>
@@ -457,11 +465,11 @@ export default function InvoiceGenerator({
             </div>
 
             {/* Total */}
-            <div className="flex justify-end mb-6">
+            <div className="flex justify-end mb-5">
               <div className="text-right">
-                <div className="flex items-center space-x-4">
-                  <span className="text-xl font-bold text-gray-900">Total:</span>
-                  <span className="text-2xl font-bold text-gray-900">
+                <div className="flex items-center space-x-3">
+                  <span className="text-lg font-bold text-gray-900">Total:</span>
+                  <span className="text-xl font-bold text-gray-900">
                     {formatCurrency(order.total)}
                   </span>
                 </div>
@@ -469,13 +477,13 @@ export default function InvoiceGenerator({
             </div>
 
             {/* Footer */}
-            <div className="mt-6 pt-4 border-t border-gray-300 text-center">
-              <div className="bg-gray-100 p-4 rounded-lg">
-                <p className="text-lg font-bold text-gray-900 mb-2">Thank you for your business!</p>
-                <p className="text-gray-600 mb-4">
+            <div className="mt-5 pt-3 border-t border-gray-300 text-center">
+              <div className="bg-gray-100 p-3 rounded-lg">
+                <p className="text-base font-bold text-gray-900 mb-1">Thank you for your business!</p>
+                <p className="text-gray-600 mb-3 text-sm">
                   We appreciate your trust in Kload for your electronic needs.
                 </p>
-                <div className="flex justify-center space-x-8 text-sm text-gray-500">
+                <div className="flex justify-center space-x-6 text-xs text-gray-500">
                   <div>
                     <p className="font-semibold">Support</p>
                     <p>support@kload.com</p>
