@@ -80,15 +80,23 @@ export default function InvoiceGenerator({
           return element.tagName === 'SCRIPT' || element.tagName === 'STYLE';
         },
         onclone: (clonedDoc) => {
-          // Convert oklch colors to hex/rgb in the cloned document
+          // Remove all existing stylesheets that might contain oklch colors
+          const existingStyles = clonedDoc.querySelectorAll('style, link[rel="stylesheet"]');
+          existingStyles.forEach(style => style.remove());
+          
+          // Create a comprehensive style override
           const style = clonedDoc.createElement('style');
           style.textContent = `
             * {
               color: rgb(0, 0, 0) !important;
               background-color: rgb(255, 255, 255) !important;
               border-color: rgb(0, 0, 0) !important;
+              background-image: none !important;
+              background: rgb(255, 255, 255) !important;
             }
-            .bg-black { background-color: rgb(0, 0, 0) !important; }
+            
+            /* Override all Tailwind classes with safe colors */
+            .bg-black, .bg-gradient-to-br { background: rgb(0, 0, 0) !important; }
             .text-white { color: rgb(255, 255, 255) !important; }
             .text-gray-900 { color: rgb(17, 24, 39) !important; }
             .text-gray-600 { color: rgb(75, 85, 99) !important; }
@@ -96,19 +104,34 @@ export default function InvoiceGenerator({
             .text-gray-700 { color: rgb(55, 65, 81) !important; }
             .border-gray-200 { border-color: rgb(229, 231, 235) !important; }
             .border-gray-300 { border-color: rgb(209, 213, 219) !important; }
-            .bg-gray-50 { background-color: rgb(249, 250, 251) !important; }
-            .bg-gray-100 { background-color: rgb(243, 244, 246) !important; }
-            .bg-gray-200 { background-color: rgb(229, 231, 235) !important; }
-            .bg-blue-100 { background-color: rgb(219, 234, 254) !important; }
+            .bg-gray-50 { background: rgb(249, 250, 251) !important; }
+            .bg-gray-100 { background: rgb(243, 244, 246) !important; }
+            .bg-gray-200 { background: rgb(229, 231, 235) !important; }
+            .bg-blue-100 { background: rgb(219, 234, 254) !important; }
             .text-blue-800 { color: rgb(30, 64, 175) !important; }
-            .bg-green-100 { background-color: rgb(220, 252, 231) !important; }
+            .bg-green-100 { background: rgb(220, 252, 231) !important; }
             .text-green-800 { color: rgb(22, 101, 52) !important; }
-            .bg-yellow-100 { background-color: rgb(254, 249, 195) !important; }
+            .bg-yellow-100 { background: rgb(254, 249, 195) !important; }
             .text-yellow-800 { color: rgb(133, 77, 14) !important; }
-            .bg-red-100 { background-color: rgb(254, 226, 226) !important; }
+            .bg-red-100 { background: rgb(254, 226, 226) !important; }
             .text-red-800 { color: rgb(153, 27, 27) !important; }
-            .bg-blue-100 { background-color: rgb(219, 234, 254) !important; }
-            .text-blue-800 { color: rgb(30, 64, 175) !important; }
+            
+            /* Override gradients with solid colors */
+            .from-black, .to-gray-800, .from-gray-100, .to-gray-200 {
+              background: rgb(243, 244, 246) !important;
+            }
+            
+            /* Ensure all elements use safe colors */
+            div, span, p, h1, h2, h3, h4, h5, h6, td, th, tr, table {
+              color: rgb(0, 0, 0) !important;
+              background-color: rgb(255, 255, 255) !important;
+            }
+            
+            /* Specific overrides for invoice elements */
+            #invoice-content * {
+              color: rgb(0, 0, 0) !important;
+              background-color: rgb(255, 255, 255) !important;
+            }
           `;
           clonedDoc.head.appendChild(style);
         }
