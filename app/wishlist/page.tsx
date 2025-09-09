@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useWishlistStore, WishlistItem } from '@/lib/wishlist';
 import { useCartStore } from '@/lib/store';
 import { Star, ShoppingCart, Heart, Trash2 } from 'lucide-react';
+import ProcessedProductImage from '@/components/ProcessedProductImage';
 
 export default function WishlistPage() {
   const { items, removeItem } = useWishlistStore();
@@ -127,25 +128,19 @@ export default function WishlistPage() {
                   {(() => {
                     const firstImage = getFirstImage(item.image);
                     return firstImage ? (
-                      <img
-                        src={
-                          firstImage.startsWith('data:')
-                            ? firstImage
-                            : `data:image/jpeg;base64,${firstImage}`
-                        }
+                      <ProcessedProductImage
+                        src={firstImage}
                         alt={item.name}
                         className="w-full h-full object-contain p-2"
+                        fallbackClassName="w-full h-full"
+                        aggressive={true}
                         style={{
                           maxWidth: '100%',
                           maxHeight: '100%',
                           objectFit: 'contain',
                         }}
-                        onError={(e) => {
-                          const target = e.currentTarget as HTMLElement;
-                          target.style.display = 'none';
-                          const fallback =
-                            target.nextElementSibling as HTMLElement;
-                          if (fallback) fallback.style.display = 'flex';
+                        onError={() => {
+                          // Handle error if needed
                         }}
                       />
                     ) : null;

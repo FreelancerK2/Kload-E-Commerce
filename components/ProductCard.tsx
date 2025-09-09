@@ -309,6 +309,7 @@ export default function ProductCard({ product, viewMode }: ProductCardProps) {
                 alt={product.name}
                 className="hover:scale-105 transition-transform duration-200 w-full h-full object-contain p-2"
                 fallbackClassName="w-full h-full"
+                aggressive={true}
               />
             ) : null;
           })()}

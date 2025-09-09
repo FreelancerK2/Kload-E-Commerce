@@ -192,6 +192,7 @@ export default function CartPage() {
                             }
                             alt={item.name}
                             className="cart-image"
+                            aggressive={true}
                             style={{
                               width: '100%',
                               height: '100%',
