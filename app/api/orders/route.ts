@@ -217,8 +217,8 @@ export async function POST(request: NextRequest) {
         continue;
       }
 
-      if (product.stock < item.quantity) {
-        console.error(`❌ Insufficient stock for product ${item.id}. Available: ${product.stock}, Requested: ${item.quantity}`);
+      if (product.stockCount < item.quantity) {
+        console.error(`❌ Insufficient stock for product ${item.id}. Available: ${product.stockCount}, Requested: ${item.quantity}`);
         continue;
       }
 
@@ -236,13 +236,13 @@ export async function POST(request: NextRequest) {
       await prisma.product.update({
         where: { id: item.id },
         data: {
-          stock: {
+          stockCount: {
             decrement: item.quantity,
           },
         },
       });
 
-      console.log(`✅ Updated stock for product ${item.id}: ${product.stock} → ${product.stock - item.quantity}`);
+      console.log(`✅ Updated stock for product ${item.id}: ${product.stockCount} → ${product.stockCount - item.quantity}`);
     }
 
     console.log('✅ Order items created and stock updated for order:', order.id);
