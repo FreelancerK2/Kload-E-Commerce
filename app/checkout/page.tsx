@@ -8,6 +8,7 @@ import CustomPopup from '@/components/CustomPopup';
 import ProcessedProductImage from '@/components/ProcessedProductImage';
 import RealStripePaymentForm from '@/components/RealStripePaymentForm';
 import { isStripeConfigured } from '@/lib/stripe';
+import StripeDebug from '@/components/StripeDebug';
 import {
   Loader2,
   User,
@@ -437,6 +438,8 @@ export default function CheckoutPage() {
         message={popup.message}
         onClose={() => setPopup({ ...popup, isOpen: false })}
       />
+      
+      <StripeDebug />
     </div>
   );
 }
