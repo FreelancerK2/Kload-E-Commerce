@@ -22,9 +22,17 @@ const stripePromise = (async () => {
   try {
     const { loadStripe } = await import('@stripe/stripe-js');
     const key = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
-    if (!key || key.includes('your_') || key.includes('placeholder')) {
-      throw new Error('Stripe publishable key is not configured');
+    
+    // Check if key is properly configured
+    if (!key || 
+        key.includes('your_') || 
+        key.includes('placeholder') ||
+        key.includes('pk_test_placeholder_key') ||
+        !key.startsWith('pk_')) {
+      console.warn('Stripe publishable key is not properly configured:', key);
+      return null;
     }
+    
     return await loadStripe(key);
   } catch (error) {
     console.error('Failed to load Stripe:', error);
@@ -233,10 +241,12 @@ function PaymentFormContent({
 export default function RealStripePaymentForm(props: RealStripePaymentFormProps) {
   const [stripeLoaded, setStripeLoaded] = useState(false);
   const [stripeError, setStripeError] = useState<string | null>(null);
+  const [stripe, setStripe] = useState<any>(null);
 
   useEffect(() => {
-    stripePromise.then((stripe) => {
-      if (stripe) {
+    stripePromise.then((stripeInstance) => {
+      if (stripeInstance) {
+        setStripe(stripeInstance);
         setStripeLoaded(true);
       } else {
         const errorMsg = 'Stripe is not properly configured. Please contact support.';
@@ -266,7 +276,7 @@ export default function RealStripePaymentForm(props: RealStripePaymentFormProps)
     );
   }
 
-  if (!stripeLoaded) {
+  if (!stripeLoaded || !stripe) {
     return (
       <div className="flex items-center justify-center py-8">
         <Loader2 className="h-6 w-6 animate-spin mr-2" />
@@ -276,7 +286,7 @@ export default function RealStripePaymentForm(props: RealStripePaymentFormProps)
   }
 
   return (
-    <Elements stripe={stripePromise}>
+    <Elements stripe={stripe}>
       <PaymentFormContent {...props} />
     </Elements>
   );
