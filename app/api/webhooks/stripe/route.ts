@@ -69,6 +69,23 @@ export async function POST(request: NextRequest) {
         console.log('Order updated to CANCELLED status');
         break;
 
+      case 'payment_intent.succeeded':
+        const succeededPayment = event.data.object;
+        console.log('Payment succeeded:', succeededPayment.id);
+
+        // Update order status to PAID
+        await prisma.order.updateMany({
+          where: {
+            stripeSessionId: succeededPayment.metadata?.session_id,
+          },
+          data: {
+            status: 'PAID',
+          },
+        });
+
+        console.log('Order updated to PAID status');
+        break;
+
       case 'payment_intent.payment_failed':
         const failedPayment = event.data.object;
         console.log('Payment failed:', failedPayment.id);

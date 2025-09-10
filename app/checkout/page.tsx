@@ -6,6 +6,7 @@ import { useCartStore } from '@/lib/store';
 import { useUser } from '@clerk/nextjs';
 import CustomPopup from '@/components/CustomPopup';
 import ProcessedProductImage from '@/components/ProcessedProductImage';
+import RealStripePaymentForm from '@/components/RealStripePaymentForm';
 import {
   Loader2,
   User,
@@ -18,117 +19,6 @@ import {
   CheckCircle,
 } from 'lucide-react';
 
-// Simple Demo Payment Form Component
-function DemoPaymentForm({
-  total,
-  onSuccess,
-  onError,
-  isLoading,
-  setIsLoading,
-  isSignedIn,
-  guestInfo,
-}: {
-  total: number;
-  onSuccess: (sessionId: string) => void;
-  onError: (error: string) => void;
-  isLoading: boolean;
-  setIsLoading: (loading: boolean) => void;
-  isSignedIn: boolean;
-  guestInfo: any;
-}) {
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-
-    // Validate guest information if not signed in
-    if (!isSignedIn) {
-      if (!guestInfo.firstName || !guestInfo.lastName || !guestInfo.email) {
-        onError(
-          'Please fill in all required guest information before proceeding.'
-        );
-        return;
-      }
-    }
-
-    setIsLoading(true);
-
-    try {
-      // Simulate payment processing
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      // For demo purposes, always succeed
-      onSuccess('demo_payment_' + Date.now());
-    } catch (error) {
-      onError('Payment failed. Please try again.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Check if form is valid
-  const isFormValid =
-    isSignedIn ||
-    (guestInfo.firstName && guestInfo.lastName && guestInfo.email);
-
-  return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <button
-        type="submit"
-        disabled={isLoading || !isFormValid}
-        className="w-full bg-black text-white py-3 sm:py-4 px-4 sm:px-6 rounded-lg font-semibold hover:scale-105 hover:shadow-xl focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center shadow-md transition-all duration-300 min-h-[48px] sm:min-h-[56px]"
-      >
-        {isLoading ? (
-          <>
-            <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-            Processing Payment...
-          </>
-        ) : !isFormValid ? (
-          <>
-            <CreditCard className="h-5 w-5 mr-2" />
-            Fill Required Information
-          </>
-        ) : (
-          <>
-            <CreditCard className="h-5 w-5 mr-2" />
-            Pay ${total.toFixed(2)}
-          </>
-        )}
-      </button>
-
-      {!isFormValid && !isSignedIn && (
-        <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3">
-          <div className="flex items-center">
-            <div className="text-sm text-yellow-800">
-              Please fill in all required guest information above before
-              proceeding with payment.
-            </div>
-          </div>
-        </div>
-      )}
-
-      <div className="flex items-center justify-center space-x-6 text-sm text-gray-600 bg-gray-50 py-3 rounded-lg">
-        <div className="flex items-center">
-          <Shield className="h-4 w-4 mr-2 text-green-600" />
-          <span className="font-medium">Secure</span>
-        </div>
-        <div className="flex items-center">
-          <Lock className="h-4 w-4 mr-2 text-green-600" />
-          <span className="font-medium">Encrypted</span>
-        </div>
-        <div className="flex items-center">
-          <CheckCircle className="h-4 w-4 mr-2 text-green-600" />
-          <span className="font-medium">SSL</span>
-        </div>
-      </div>
-
-      <div className="text-center text-xs text-gray-500">
-        <p>💳 Demo Payment Form</p>
-        <p className="text-blue-600 font-medium">
-          This is a demo - no real payment will be processed
-        </p>
-      </div>
-    </form>
-  );
-}
 
 export default function CheckoutPage() {
   const { items, getTotal, clearCart } = useCartStore();
@@ -483,7 +373,7 @@ export default function CheckoutPage() {
               </div>
 
               {/* Payment Form */}
-              <DemoPaymentForm
+              <RealStripePaymentForm
                 total={total}
                 onSuccess={handlePaymentSuccess}
                 onError={handlePaymentError}
