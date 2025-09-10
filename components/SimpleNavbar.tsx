@@ -124,7 +124,6 @@ export default function SimpleNavbar() {
               {showSuggestions && (
                 <SearchSuggestions
                   query={searchQuery}
-                  onSuggestionClick={handleSuggestionClick}
                 />
               )}
             </div>
