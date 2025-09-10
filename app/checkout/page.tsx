@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useCartStore } from '@/lib/store';
-import { useUser } from '@clerk/nextjs';
+// import { useUser } from '@clerk/nextjs';
 import CustomPopup from '@/components/CustomPopup';
 import ProcessedProductImage from '@/components/ProcessedProductImage';
 import RealStripePaymentForm from '@/components/RealStripePaymentForm';
@@ -25,7 +25,9 @@ import {
 
 export default function CheckoutPage() {
   const { items, getTotal, clearCart } = useCartStore();
-  const { user, isSignedIn } = useUser();
+  // const { user, isSignedIn } = useUser();
+  const user = null;
+  const isSignedIn = false;
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [guestInfo, setGuestInfo] = useState({

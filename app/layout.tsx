@@ -35,20 +35,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider
-      publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
-      signInUrl="/login"
-      signUpUrl="/signup"
-    >
-      <html lang="en">
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white min-h-screen`}
-        >
-          <ConditionalNavbar />
-          {children}
-          <ToastContainer />
-        </body>
-      </html>
-    </ClerkProvider>
+    <html lang="en">
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white min-h-screen`}
+      >
+        <ConditionalNavbar />
+        {children}
+        <ToastContainer />
+      </body>
+    </html>
   );
 }

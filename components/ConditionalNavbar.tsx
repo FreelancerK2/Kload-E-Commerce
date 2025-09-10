@@ -1,14 +1,10 @@
 'use client';
 
-import { useUser } from '@clerk/nextjs';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { isAdminUser } from '@/lib/admin';
-import AdminNavbar from './AdminNavbar';
-import UserNavbar from './UserNavbar';
+import SimpleNavbar from './SimpleNavbar';
 
 export default function ConditionalNavbar() {
-  const { isSignedIn, user, isLoaded } = useUser();
   const pathname = usePathname();
   const [showNavbar, setShowNavbar] = useState(true);
 
@@ -31,6 +27,6 @@ export default function ConditionalNavbar() {
     return null;
   }
 
-  // For all other routes, show user navbar
-  return <UserNavbar />;
+  // For all other routes, show simple navbar
+  return <SimpleNavbar />;
 }
