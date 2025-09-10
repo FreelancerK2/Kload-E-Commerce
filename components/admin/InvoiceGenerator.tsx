@@ -67,20 +67,20 @@ export default function InvoiceGenerator({
       
       console.log('✅ Invoice element found:', invoiceElement);
 
-      // Create canvas from HTML element with high quality settings
-      console.log('🔄 Creating high-quality canvas from HTML...');
+      // Create canvas from HTML element with optimized settings
+      console.log('🔄 Creating optimized canvas from HTML...');
       const canvas = await html2canvas(invoiceElement, {
-        scale: 3, // Increased scale for better quality
+        scale: 2, // Optimal scale for quality vs performance
         useCORS: true,
         allowTaint: true,
         backgroundColor: '#ffffff',
-        logging: false, // Disable logging for cleaner output
-        width: invoiceElement.scrollWidth,
-        height: invoiceElement.scrollHeight,
+        logging: false,
+        width: invoiceElement.offsetWidth,
+        height: invoiceElement.offsetHeight,
         scrollX: 0,
         scrollY: 0,
-        windowWidth: invoiceElement.scrollWidth,
-        windowHeight: invoiceElement.scrollHeight,
+        windowWidth: invoiceElement.offsetWidth,
+        windowHeight: invoiceElement.offsetHeight,
         ignoreElements: (element) => {
           // Skip elements that might cause issues
           if (element.tagName === 'SCRIPT' || element.tagName === 'STYLE') {
@@ -248,11 +248,11 @@ export default function InvoiceGenerator({
             .overflow-x-auto { overflow-x: auto !important; }
             .rounded-lg { border-radius: 8px !important; }
             .shadow-sm { box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important; }
-            .table-fixed { table-layout: fixed !important; }
             
-            /* Column widths */
-            .w-2\/5 { width: 40% !important; }
-            .w-1\/6 { width: 16.666667% !important; }
+            /* Column widths - fixed widths to prevent wrapping */
+            th[style*="width: 50%"] { width: 50% !important; }
+            th[style*="width: 15%"] { width: 15% !important; }
+            th[style*="width: 17.5%"] { width: 17.5% !important; }
             
             /* Image styles - enhanced PDF sizing */
             .w-16 { width: 48px !important; }
@@ -263,8 +263,10 @@ export default function InvoiceGenerator({
             .rounded-lg { border-radius: 6px !important; }
             .rounded { border-radius: 6px !important; }
             
-            /* Text wrapping and overflow */
-            .break-words { word-wrap: break-word !important; word-break: break-word !important; }
+            /* Text wrapping and overflow - prevent wrapping */
+            .whitespace-nowrap { white-space: nowrap !important; }
+            .overflow-hidden { overflow: hidden !important; }
+            .text-ellipsis { text-overflow: ellipsis !important; }
             .min-w-0 { min-width: 0 !important; }
             .flex-1 { flex: 1 1 0% !important; }
             .flex-shrink-0 { flex-shrink: 0 !important; }
@@ -292,46 +294,47 @@ export default function InvoiceGenerator({
       
       console.log('✅ Canvas created:', canvas.width, 'x', canvas.height);
 
-      // Create high-quality PDF
-      console.log('🔄 Creating high-quality PDF...');
-      const imgData = canvas.toDataURL('image/png', 1.0); // Maximum quality
+      // Create optimized PDF
+      console.log('🔄 Creating optimized PDF...');
+      const imgData = canvas.toDataURL('image/jpeg', 0.95); // High quality JPEG
       const pdf = new jsPDF('p', 'mm', 'a4');
 
       const imgWidth = 210; // A4 width in mm
-      const pageHeight = 295; // A4 height in mm
+      const pageHeight = 297; // A4 height in mm
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
       
-      // Calculate optimal scaling for best quality
+      // Simple scaling to fit page
       let finalWidth = imgWidth;
       let finalHeight = imgHeight;
       
       if (imgHeight > pageHeight) {
-        // Scale down proportionally to fit on one page
         const scale = pageHeight / imgHeight;
         finalHeight = pageHeight;
         finalWidth = imgWidth * scale;
       }
 
-      // Add margins for better appearance
-      const margin = 10;
+      // Add small margins
+      const margin = 5;
       const xOffset = margin;
       const yOffset = margin;
-      const contentWidth = imgWidth - (2 * margin);
-      const contentHeight = pageHeight - (2 * margin);
       
-      // Scale to fit within margins
-      const scaleX = contentWidth / finalWidth;
-      const scaleY = contentHeight / finalHeight;
-      const finalScale = Math.min(scaleX, scaleY, 1);
+      // Scale to fit with margins
+      const maxWidth = imgWidth - (2 * margin);
+      const maxHeight = pageHeight - (2 * margin);
       
-      const scaledWidth = finalWidth * finalScale;
-      const scaledHeight = finalHeight * finalScale;
+      if (finalWidth > maxWidth) {
+        const scale = maxWidth / finalWidth;
+        finalWidth = maxWidth;
+        finalHeight = finalHeight * scale;
+      }
       
-      // Center the content
-      const centeredX = xOffset + (contentWidth - scaledWidth) / 2;
-      const centeredY = yOffset + (contentHeight - scaledHeight) / 2;
+      if (finalHeight > maxHeight) {
+        const scale = maxHeight / finalHeight;
+        finalHeight = maxHeight;
+        finalWidth = finalWidth * scale;
+      }
 
-      pdf.addImage(imgData, 'PNG', centeredX, centeredY, scaledWidth, scaledHeight, '', 'FAST');
+      pdf.addImage(imgData, 'JPEG', xOffset, yOffset, finalWidth, finalHeight);
 
       // Download PDF
       const fileName = `invoice-${order.id}-${new Date().toISOString().split('T')[0]}.pdf`;
@@ -470,19 +473,19 @@ export default function InvoiceGenerator({
             <div className="mb-6">
               <h3 className="text-base font-bold text-gray-900 mb-2">Order Items:</h3>
               <div className="overflow-x-auto">
-                <table className="w-full border-collapse border border-gray-300 rounded-lg overflow-hidden table-fixed">
+                <table className="w-full border-collapse border border-gray-300 rounded-lg overflow-hidden">
                   <thead>
                     <tr className="bg-gray-100">
-                      <th className="border border-gray-300 px-4 py-3 text-left text-sm font-bold text-gray-900 w-2/5">
+                      <th className="border border-gray-300 px-4 py-3 text-left text-sm font-bold text-gray-900" style={{width: '50%'}}>
                         Product
                       </th>
-                      <th className="border border-gray-300 px-4 py-3 text-center text-sm font-bold text-gray-900 w-1/6">
+                      <th className="border border-gray-300 px-4 py-3 text-center text-sm font-bold text-gray-900" style={{width: '15%'}}>
                         Quantity
                       </th>
-                      <th className="border border-gray-300 px-4 py-3 text-right text-sm font-bold text-gray-900 w-1/6">
+                      <th className="border border-gray-300 px-4 py-3 text-right text-sm font-bold text-gray-900" style={{width: '17.5%'}}>
                         Unit Price
                       </th>
-                      <th className="border border-gray-300 px-4 py-3 text-right text-sm font-bold text-gray-900 w-1/6">
+                      <th className="border border-gray-300 px-4 py-3 text-right text-sm font-bold text-gray-900" style={{width: '17.5%'}}>
                         Total
                       </th>
                     </tr>
@@ -505,11 +508,11 @@ export default function InvoiceGenerator({
                                   className="w-12 h-12 object-cover rounded border border-gray-200 flex-shrink-0"
                                 />
                               )}
-                              <div className="min-w-0 flex-1">
-                                <p className="font-semibold text-gray-900 text-sm leading-tight break-words">
+                              <div className="flex-1">
+                                <p className="font-semibold text-gray-900 text-sm leading-tight whitespace-nowrap overflow-hidden text-ellipsis">
                                   {item.name}
                                 </p>
-                                <p className="text-xs text-gray-500 mt-1">Premium Quality Product</p>
+                                <p className="text-xs text-gray-500 mt-1 whitespace-nowrap overflow-hidden text-ellipsis">Premium Quality Product</p>
                               </div>
                             </div>
                           </td>
