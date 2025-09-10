@@ -124,6 +124,9 @@ export default function SimpleNavbar() {
               {showSuggestions && (
                 <SearchSuggestions
                   query={searchQuery}
+                  isVisible={showSuggestions}
+                  onSelect={() => setShowSuggestions(false)}
+                  onClose={() => setShowSuggestions(false)}
                 />
               )}
             </div>
