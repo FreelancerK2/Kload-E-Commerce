@@ -196,7 +196,7 @@ export default function CheckoutPage() {
                 <div className="space-y-4">
                   <div className="p-4 bg-blue-50 rounded-lg">
                     <p className="text-sm text-blue-800">
-                      Welcome back, {user?.firstName}! Your account information
+                      Welcome back! Your account information
                       will be used for this order.
                     </p>
                   </div>
