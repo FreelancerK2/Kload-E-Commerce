@@ -6,7 +6,7 @@ import { useCartStore } from '@/lib/store';
 import { useUser } from '@clerk/nextjs';
 import CustomPopup from '@/components/CustomPopup';
 import ProcessedProductImage from '@/components/ProcessedProductImage';
-import IsolatedStripeForm from '@/components/IsolatedStripeForm';
+import RealStripePaymentForm from '@/components/RealStripePaymentForm';
 import { isStripeConfigured } from '@/lib/stripe';
 import StripeDebug from '@/components/StripeDebug';
 import {
@@ -377,7 +377,7 @@ export default function CheckoutPage() {
 
               {/* Payment Form */}
               {isStripeConfigured() ? (
-                <IsolatedStripeForm
+                <RealStripePaymentForm
                   total={total}
                   onSuccess={handlePaymentSuccess}
                   onError={handlePaymentError}
