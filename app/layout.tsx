@@ -39,8 +39,6 @@ export default function RootLayout({
       publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
       signInUrl="/login"
       signUpUrl="/signup"
-      afterSignInUrl="/"
-      afterSignUpUrl="/"
     >
       <html lang="en">
         <body
