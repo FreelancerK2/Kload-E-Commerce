@@ -67,20 +67,26 @@ export default function InvoiceGenerator({
       
       console.log('✅ Invoice element found:', invoiceElement);
 
-      // Create canvas from HTML element
-      console.log('🔄 Creating canvas from HTML...');
+      // Create canvas from HTML element with high quality settings
+      console.log('🔄 Creating high-quality canvas from HTML...');
       const canvas = await html2canvas(invoiceElement, {
-        scale: 2,
+        scale: 3, // Increased scale for better quality
         useCORS: true,
         allowTaint: true,
         backgroundColor: '#ffffff',
-        logging: true, // Enable logging for debugging
+        logging: false, // Disable logging for cleaner output
+        width: invoiceElement.scrollWidth,
+        height: invoiceElement.scrollHeight,
+        scrollX: 0,
+        scrollY: 0,
+        windowWidth: invoiceElement.scrollWidth,
+        windowHeight: invoiceElement.scrollHeight,
         ignoreElements: (element) => {
-          // Skip elements that might cause color parsing issues
+          // Skip elements that might cause issues
           if (element.tagName === 'SCRIPT' || element.tagName === 'STYLE') {
             return true;
           }
-          // Skip elements with oklch colors (cast to HTMLElement to access style property)
+          // Skip elements with oklch colors
           const htmlElement = element as HTMLElement;
           if (htmlElement.style && htmlElement.style.color && htmlElement.style.color.includes('oklch')) {
             return true;
@@ -103,54 +109,56 @@ export default function InvoiceGenerator({
               color: #111827 !important;
             }
             
-            /* Invoice container - clean professional design */
+            /* Invoice container - high quality PDF design */
             #invoice-content { 
-              padding: 24px !important; 
+              padding: 32px !important; 
               background: white !important; 
               max-width: 800px !important; 
               margin: 0 auto !important; 
-              font-size: 12px !important;
-              line-height: 1.3 !important;
+              font-size: 14px !important;
+              line-height: 1.4 !important;
+              font-family: 'Arial', 'Helvetica', sans-serif !important;
+              color: #000000 !important;
             }
             
-            /* Header styles - clean spacing */
+            /* Header styles - improved PDF spacing */
             .text-center { text-align: center !important; }
-            .mb-10 { margin-bottom: 20px !important; }
-            .mb-8 { margin-bottom: 16px !important; }
-            .mb-6 { margin-bottom: 12px !important; }
-            .mb-5 { margin-bottom: 10px !important; }
-            .mb-4 { margin-bottom: 8px !important; }
-            .mb-3 { margin-bottom: 6px !important; }
-            .mb-2 { margin-bottom: 4px !important; }
-            .mb-1 { margin-bottom: 2px !important; }
-            .mt-8 { margin-top: 16px !important; }
-            .mt-6 { margin-top: 12px !important; }
-            .mt-5 { margin-top: 10px !important; }
-            .pt-6 { padding-top: 12px !important; }
-            .pt-4 { padding-top: 8px !important; }
-            .pt-3 { padding-top: 6px !important; }
+            .mb-10 { margin-bottom: 24px !important; }
+            .mb-8 { margin-bottom: 20px !important; }
+            .mb-6 { margin-bottom: 16px !important; }
+            .mb-5 { margin-bottom: 12px !important; }
+            .mb-4 { margin-bottom: 10px !important; }
+            .mb-3 { margin-bottom: 8px !important; }
+            .mb-2 { margin-bottom: 6px !important; }
+            .mb-1 { margin-bottom: 4px !important; }
+            .mt-8 { margin-top: 20px !important; }
+            .mt-6 { margin-top: 16px !important; }
+            .mt-5 { margin-top: 12px !important; }
+            .pt-6 { padding-top: 16px !important; }
+            .pt-4 { padding-top: 10px !important; }
+            .pt-3 { padding-top: 8px !important; }
             
-            /* Logo and company name - clean sizing */
-            .w-12 { width: 36px !important; }
-            .h-12 { height: 36px !important; }
-            .w-14 { width: 42px !important; }
-            .h-14 { height: 42px !important; }
-            .w-16 { width: 48px !important; }
-            .h-16 { height: 48px !important; }
-            .w-20 { width: 56px !important; }
-            .h-20 { height: 56px !important; }
+            /* Logo and company name - enhanced PDF sizing */
+            .w-12 { width: 48px !important; }
+            .h-12 { height: 48px !important; }
+            .w-14 { width: 56px !important; }
+            .h-14 { height: 56px !important; }
+            .w-16 { width: 64px !important; }
+            .h-16 { height: 64px !important; }
+            .w-20 { width: 72px !important; }
+            .h-20 { height: 72px !important; }
             .bg-black { background: #000000 !important; }
             .bg-gradient-to-br { background: #000000 !important; }
             .rounded-full { border-radius: 50% !important; }
             .rounded-xl { border-radius: 6px !important; }
             .text-white { color: #ffffff !important; }
-            .text-lg { font-size: 12px !important; }
-            .text-xl { font-size: 14px !important; }
-            .text-2xl { font-size: 16px !important; }
-            .text-3xl { font-size: 18px !important; }
+            .text-lg { font-size: 14px !important; }
+            .text-xl { font-size: 16px !important; }
+            .text-2xl { font-size: 18px !important; }
+            .text-3xl { font-size: 20px !important; }
             .font-bold { font-weight: bold !important; }
-            .text-4xl { font-size: 20px !important; }
-            .text-5xl { font-size: 22px !important; }
+            .text-4xl { font-size: 22px !important; }
+            .text-5xl { font-size: 24px !important; }
             
             /* Force all colors to use standard hex values to avoid oklch issues */
             * { 
@@ -201,21 +209,21 @@ export default function InvoiceGenerator({
             .border-b { border-bottom: 1px solid #d1d5db !important; }
             .border-b-2 { border-bottom: 2px solid #d1d5db !important; }
             
-            /* Padding and margins - clean spacing */
-            .p-3 { padding: 6px !important; }
-            .p-4 { padding: 8px !important; }
-            .p-6 { padding: 12px !important; }
-            .p-8 { padding: 16px !important; }
-            .px-3 { padding-left: 6px !important; padding-right: 6px !important; }
-            .px-4 { padding-left: 8px !important; padding-right: 8px !important; }
-            .px-6 { padding-left: 12px !important; padding-right: 12px !important; }
-            .py-1 { padding-top: 2px !important; padding-bottom: 2px !important; }
-            .py-2 { padding-top: 4px !important; padding-bottom: 4px !important; }
-            .py-3 { padding-top: 6px !important; padding-bottom: 6px !important; }
-            .py-4 { padding-top: 8px !important; padding-bottom: 8px !important; }
-            .pb-2 { padding-bottom: 4px !important; }
-            .space-y-1 > * + * { margin-top: 2px !important; }
-            .space-y-2 > * + * { margin-top: 4px !important; }
+            /* Padding and margins - enhanced PDF spacing */
+            .p-3 { padding: 8px !important; }
+            .p-4 { padding: 10px !important; }
+            .p-6 { padding: 16px !important; }
+            .p-8 { padding: 20px !important; }
+            .px-3 { padding-left: 8px !important; padding-right: 8px !important; }
+            .px-4 { padding-left: 10px !important; padding-right: 10px !important; }
+            .px-6 { padding-left: 16px !important; padding-right: 16px !important; }
+            .py-1 { padding-top: 4px !important; padding-bottom: 4px !important; }
+            .py-2 { padding-top: 6px !important; padding-bottom: 6px !important; }
+            .py-3 { padding-top: 8px !important; padding-bottom: 8px !important; }
+            .py-4 { padding-top: 10px !important; padding-bottom: 10px !important; }
+            .pb-2 { padding-bottom: 6px !important; }
+            .space-y-1 > * + * { margin-top: 4px !important; }
+            .space-y-2 > * + * { margin-top: 6px !important; }
             
             /* Layout */
             .grid { display: grid !important; }
@@ -246,14 +254,14 @@ export default function InvoiceGenerator({
             .w-2\/5 { width: 40% !important; }
             .w-1\/6 { width: 16.666667% !important; }
             
-            /* Image styles - clean sizing */
-            .w-16 { width: 40px !important; }
-            .h-16 { height: 40px !important; }
-            .w-12 { width: 36px !important; }
-            .h-12 { height: 36px !important; }
+            /* Image styles - enhanced PDF sizing */
+            .w-16 { width: 48px !important; }
+            .h-16 { height: 48px !important; }
+            .w-12 { width: 44px !important; }
+            .h-12 { height: 44px !important; }
             .object-cover { object-fit: cover !important; }
-            .rounded-lg { border-radius: 4px !important; }
-            .rounded { border-radius: 4px !important; }
+            .rounded-lg { border-radius: 6px !important; }
+            .rounded { border-radius: 6px !important; }
             
             /* Text wrapping and overflow */
             .break-words { word-wrap: break-word !important; word-break: break-word !important; }
@@ -284,16 +292,16 @@ export default function InvoiceGenerator({
       
       console.log('✅ Canvas created:', canvas.width, 'x', canvas.height);
 
-      // Create PDF - Force single page
-      console.log('🔄 Creating PDF...');
-      const imgData = canvas.toDataURL('image/png');
+      // Create high-quality PDF
+      console.log('🔄 Creating high-quality PDF...');
+      const imgData = canvas.toDataURL('image/png', 1.0); // Maximum quality
       const pdf = new jsPDF('p', 'mm', 'a4');
 
       const imgWidth = 210; // A4 width in mm
       const pageHeight = 295; // A4 height in mm
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
       
-      // Scale down the image to fit on one page if it's too tall
+      // Calculate optimal scaling for best quality
       let finalWidth = imgWidth;
       let finalHeight = imgHeight;
       
@@ -304,11 +312,26 @@ export default function InvoiceGenerator({
         finalWidth = imgWidth * scale;
       }
 
-      // Center the image on the page
-      const xOffset = (imgWidth - finalWidth) / 2;
-      const yOffset = (pageHeight - finalHeight) / 2;
+      // Add margins for better appearance
+      const margin = 10;
+      const xOffset = margin;
+      const yOffset = margin;
+      const contentWidth = imgWidth - (2 * margin);
+      const contentHeight = pageHeight - (2 * margin);
+      
+      // Scale to fit within margins
+      const scaleX = contentWidth / finalWidth;
+      const scaleY = contentHeight / finalHeight;
+      const finalScale = Math.min(scaleX, scaleY, 1);
+      
+      const scaledWidth = finalWidth * finalScale;
+      const scaledHeight = finalHeight * finalScale;
+      
+      // Center the content
+      const centeredX = xOffset + (contentWidth - scaledWidth) / 2;
+      const centeredY = yOffset + (contentHeight - scaledHeight) / 2;
 
-      pdf.addImage(imgData, 'PNG', xOffset, yOffset, finalWidth, finalHeight);
+      pdf.addImage(imgData, 'PNG', centeredX, centeredY, scaledWidth, scaledHeight, '', 'FAST');
 
       // Download PDF
       const fileName = `invoice-${order.id}-${new Date().toISOString().split('T')[0]}.pdf`;
@@ -368,21 +391,21 @@ export default function InvoiceGenerator({
 
         {/* Invoice Content */}
         <div className="overflow-y-auto max-h-[calc(90vh-120px)]">
-          <div id="invoice-content" className="p-6 bg-white max-w-4xl mx-auto">
+          <div id="invoice-content" className="p-8 bg-white max-w-4xl mx-auto shadow-lg rounded-lg border border-gray-200">
             {/* Company Header */}
-            <div className="text-center mb-6">
-              <div className="flex items-center justify-center mb-3">
-                <div className="w-12 h-12 bg-black rounded-full flex items-center justify-center mr-3">
-                  <span className="text-white font-bold text-xl">K</span>
+            <div className="text-center mb-8">
+              <div className="flex items-center justify-center mb-4">
+                <div className="w-16 h-16 bg-black rounded-full flex items-center justify-center mr-4">
+                  <span className="text-white font-bold text-2xl">K</span>
                 </div>
                 <div className="text-left">
-                  <h1 className="text-3xl font-bold text-gray-900">Kload</h1>
-                  <p className="text-base text-gray-600">Premium E-commerce Store</p>
+                  <h1 className="text-4xl font-bold text-gray-900">Kload</h1>
+                  <p className="text-lg text-gray-600">Premium E-commerce Store</p>
                 </div>
               </div>
-              <div className="bg-gray-100 p-3 rounded-lg border border-gray-200">
-                <p className="text-gray-700 font-medium text-sm">Your One-Stop Electronic Market</p>
-                <p className="text-xs text-gray-500 mt-1">Quality Electronics • Fast Delivery • 24/7 Support</p>
+              <div className="bg-gray-50 p-4 rounded-xl border border-gray-200">
+                <p className="text-gray-800 font-semibold text-base">Your One-Stop Electronic Market</p>
+                <p className="text-sm text-gray-600 mt-1">Quality Electronics • Fast Delivery • 24/7 Support</p>
               </div>
             </div>
 
