@@ -17,8 +17,8 @@ import {
   AlertCircle,
 } from 'lucide-react';
 
-// Load Stripe with better error handling
-const stripePromise = (async () => {
+// Create a function to load Stripe dynamically
+const loadStripeInstance = async () => {
   try {
     const { loadStripe } = await import('@stripe/stripe-js');
     
@@ -49,14 +49,24 @@ const stripePromise = (async () => {
     }
     
     console.log('Loading Stripe with key:', key.substring(0, 20) + '...');
-    const stripe = await loadStripe(key);
+    
+    // Ensure the key is properly formatted and passed
+    const formattedKey = key.trim();
+    console.log('Formatted key length:', formattedKey.length);
+    console.log('Key validation:', {
+      startsWithPk: formattedKey.startsWith('pk_'),
+      hasTest: formattedKey.includes('test'),
+      length: formattedKey.length
+    });
+    
+    const stripe = await loadStripe(formattedKey);
     console.log('Stripe loaded successfully:', !!stripe);
     return stripe;
   } catch (error) {
     console.error('Failed to load Stripe:', error);
     return null;
   }
-})();
+};
 
 interface RealStripePaymentFormProps {
   total: number;
@@ -281,7 +291,7 @@ export default function RealStripePaymentForm(props: RealStripePaymentFormProps)
       return;
     }
 
-    stripePromise.then((stripeInstance) => {
+    loadStripeInstance().then((stripeInstance) => {
       if (stripeInstance) {
         setStripe(stripeInstance);
         setStripeLoaded(true);
@@ -325,7 +335,7 @@ export default function RealStripePaymentForm(props: RealStripePaymentFormProps)
   }
 
   return (
-    <Elements stripe={stripe}>
+    <Elements stripe={stripe} options={{}}>
       <PaymentFormContent {...props} />
     </Elements>
   );
