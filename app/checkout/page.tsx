@@ -207,7 +207,7 @@ export default function CheckoutPage() {
                       </label>
                       <input
                         type="text"
-                        value={user?.firstName || ''}
+                        value={''}
                         disabled
                         className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-900"
                       />
@@ -218,7 +218,7 @@ export default function CheckoutPage() {
                       </label>
                       <input
                         type="text"
-                        value={user?.lastName || ''}
+                        value={''}
                         disabled
                         className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-900"
                       />
@@ -230,7 +230,7 @@ export default function CheckoutPage() {
                     </label>
                     <input
                       type="email"
-                      value={user?.emailAddresses[0]?.emailAddress || ''}
+                        value={''}
                       disabled
                       className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-900"
                     />
