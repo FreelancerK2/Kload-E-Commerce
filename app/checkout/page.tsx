@@ -376,7 +376,7 @@ export default function CheckoutPage() {
               </div>
 
               {/* Payment Form */}
-              {isStripeConfigured() ? (
+              {false ? (
                 <IsolatedStripeForm
                   total={total}
                   onSuccess={handlePaymentSuccess}
