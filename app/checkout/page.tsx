@@ -18,6 +18,7 @@ import {
   Shield,
   Lock,
   CheckCircle,
+  AlertCircle,
 } from 'lucide-react';
 
 
