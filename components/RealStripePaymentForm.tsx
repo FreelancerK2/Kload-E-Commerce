@@ -22,15 +22,14 @@ const stripePromise = (async () => {
   try {
     const { loadStripe } = await import('@stripe/stripe-js');
     
-    // Get the key from multiple possible sources
-    const key = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || 
-                (typeof window !== 'undefined' ? (window as any).__STRIPE_PUBLISHABLE_KEY__ : null);
+    // Get the key - ensure it's available at runtime
+    const key = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
     
-    console.log('Stripe key check:', {
+    console.log('Stripe initialization:', {
       hasKey: !!key,
       keyLength: key?.length,
-      keyStart: key?.substring(0, 10),
-      envVar: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY?.substring(0, 10)
+      keyStart: key?.substring(0, 15),
+      isClient: typeof window !== 'undefined'
     });
     
     // Check if key is properly configured
@@ -43,7 +42,16 @@ const stripePromise = (async () => {
       return null;
     }
     
-    return await loadStripe(key);
+    // Ensure we have a valid key before calling loadStripe
+    if (!key || key.length < 50) {
+      console.error('Invalid Stripe key:', key);
+      return null;
+    }
+    
+    console.log('Loading Stripe with key:', key.substring(0, 20) + '...');
+    const stripe = await loadStripe(key);
+    console.log('Stripe loaded successfully:', !!stripe);
+    return stripe;
   } catch (error) {
     console.error('Failed to load Stripe:', error);
     return null;
@@ -254,16 +262,37 @@ export default function RealStripePaymentForm(props: RealStripePaymentFormProps)
   const [stripe, setStripe] = useState<any>(null);
 
   useEffect(() => {
+    // Check if we're on the client side and have the environment variable
+    if (typeof window === 'undefined') {
+      return; // Don't run on server side
+    }
+
+    const key = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
+    console.log('RealStripePaymentForm - Environment check:', {
+      hasKey: !!key,
+      keyStart: key?.substring(0, 15),
+      isClient: true
+    });
+
+    if (!key || !key.startsWith('pk_')) {
+      const errorMsg = 'Stripe publishable key is not available.';
+      setStripeError(errorMsg);
+      props.onError(errorMsg);
+      return;
+    }
+
     stripePromise.then((stripeInstance) => {
       if (stripeInstance) {
         setStripe(stripeInstance);
         setStripeLoaded(true);
+        console.log('Stripe instance loaded successfully');
       } else {
-        const errorMsg = 'Stripe is not properly configured. Please contact support.';
+        const errorMsg = 'Failed to initialize Stripe. Please try again.';
         setStripeError(errorMsg);
         props.onError(errorMsg);
       }
     }).catch((error) => {
+      console.error('Stripe promise error:', error);
       const errorMsg = 'Failed to load Stripe. Please check your configuration.';
       setStripeError(errorMsg);
       props.onError(errorMsg);
