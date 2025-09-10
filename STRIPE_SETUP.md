@@ -10,12 +10,14 @@ This guide will help you set up real Stripe payments for your Kload e-commerce s
 ## Step 1: Get Your Stripe Keys
 
 ### Test Mode (Development)
+
 1. Log in to your Stripe Dashboard
 2. Go to **Developers** > **API Keys**
 3. Copy your **Publishable key** (starts with `pk_test_`)
 4. Copy your **Secret key** (starts with `sk_test_`)
 
 ### Live Mode (Production)
+
 1. In your Stripe Dashboard, toggle **View test data** to OFF
 2. Go to **Developers** > **API Keys**
 3. Copy your **Publishable key** (starts with `pk_live_`)
@@ -24,6 +26,7 @@ This guide will help you set up real Stripe payments for your Kload e-commerce s
 ## Step 2: Configure Environment Variables
 
 ### For Vercel Deployment:
+
 1. Go to your Vercel project dashboard
 2. Navigate to **Settings** > **Environment Variables**
 3. Add the following variables:
@@ -35,12 +38,14 @@ STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret_here
 ```
 
 ### For Local Development:
+
 1. Create a `.env.local` file in your project root
 2. Add the same variables as above
 
 ## Step 3: Set Up Webhooks
 
 ### For Vercel Deployment:
+
 1. In your Stripe Dashboard, go to **Developers** > **Webhooks**
 2. Click **Add endpoint**
 3. Set the endpoint URL to: `https://your-domain.vercel.app/api/webhooks/stripe`
@@ -54,6 +59,7 @@ STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret_here
 7. Add this to your environment variables as `STRIPE_WEBHOOK_SECRET`
 
 ### For Local Development:
+
 1. Install Stripe CLI: `stripe listen --forward-to localhost:3000/api/webhooks/stripe`
 2. Copy the webhook signing secret from the CLI output
 3. Add it to your `.env.local` file
@@ -61,6 +67,7 @@ STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret_here
 ## Step 4: Test Your Integration
 
 ### Test Cards (Test Mode Only)
+
 Use these test card numbers:
 
 - **Visa**: 4242424242424242
@@ -72,6 +79,7 @@ Use these test card numbers:
 Use any future expiry date (e.g., 12/25) and any 3-digit CVC.
 
 ### Testing Steps:
+
 1. Add items to your cart
 2. Go to checkout
 3. Fill in customer information
@@ -114,6 +122,7 @@ When you're ready to accept real payments:
    - Ensure you're using the correct API version
 
 ### Support:
+
 - Stripe Documentation: [stripe.com/docs](https://stripe.com/docs)
 - Stripe Support: [support.stripe.com](https://support.stripe.com)
 

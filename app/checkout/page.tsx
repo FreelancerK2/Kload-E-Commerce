@@ -7,6 +7,7 @@ import { useUser } from '@clerk/nextjs';
 import CustomPopup from '@/components/CustomPopup';
 import ProcessedProductImage from '@/components/ProcessedProductImage';
 import RealStripePaymentForm from '@/components/RealStripePaymentForm';
+import { isStripeConfigured } from '@/lib/stripe';
 import {
   Loader2,
   User,
@@ -373,15 +374,56 @@ export default function CheckoutPage() {
               </div>
 
               {/* Payment Form */}
-              <RealStripePaymentForm
-                total={total}
-                onSuccess={handlePaymentSuccess}
-                onError={handlePaymentError}
-                isLoading={isLoading}
-                setIsLoading={setIsLoading}
-                isSignedIn={isSignedIn || false}
-                guestInfo={guestInfo}
-              />
+              {isStripeConfigured() ? (
+                <RealStripePaymentForm
+                  total={total}
+                  onSuccess={handlePaymentSuccess}
+                  onError={handlePaymentError}
+                  isLoading={isLoading}
+                  setIsLoading={setIsLoading}
+                  isSignedIn={isSignedIn || false}
+                  guestInfo={guestInfo}
+                />
+              ) : (
+                <div className="space-y-6">
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4">
+                    <div className="flex items-center">
+                      <AlertCircle className="h-5 w-5 text-yellow-600 mr-2" />
+                      <div className="text-sm text-yellow-800">
+                        <strong>Stripe Payment System Not Configured</strong>
+                        <p className="mt-1">
+                          To enable real payments, please configure your Stripe keys in the environment variables.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-gray-50 border border-gray-200 rounded-md p-4">
+                    <h3 className="text-sm font-medium text-gray-900 mb-2">Demo Payment (Test Mode)</h3>
+                    <p className="text-xs text-gray-600 mb-4">
+                      This is a demo payment form. No real payment will be processed.
+                    </p>
+                    
+                    <button
+                      onClick={() => handlePaymentSuccess('demo_payment_' + Date.now())}
+                      disabled={isLoading}
+                      className="w-full bg-gray-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-gray-700 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                    >
+                      {isLoading ? (
+                        <>
+                          <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                          Processing Demo Payment...
+                        </>
+                      ) : (
+                        <>
+                          <CreditCard className="h-5 w-5 mr-2" />
+                          Complete Demo Payment (${total.toFixed(2)})
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

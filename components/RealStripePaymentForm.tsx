@@ -60,6 +60,7 @@ function PaymentFormContent({
     // Create PaymentIntent as soon as the page loads
     const createPaymentIntent = async () => {
       try {
+        console.log('Creating PaymentIntent for amount:', total);
         const response = await fetch('/api/checkout', {
           method: 'POST',
           headers: {
@@ -72,19 +73,25 @@ function PaymentFormContent({
         });
 
         const data = await response.json();
+        console.log('PaymentIntent response:', data);
 
-        if (response.ok) {
+        if (response.ok && data.clientSecret) {
           setClientSecret(data.clientSecret);
+          console.log('Client secret set successfully');
         } else {
           throw new Error(data.error || 'Failed to create payment intent');
         }
       } catch (error) {
         console.error('Error creating payment intent:', error);
-        onError('Failed to initialize payment. Please try again.');
+        onError('Failed to initialize payment. Please check your Stripe configuration and try again.');
       }
     };
 
-    createPaymentIntent();
+    if (total > 0) {
+      createPaymentIntent();
+    } else {
+      onError('Invalid order total. Please refresh the page and try again.');
+    }
   }, [total, onError]);
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -225,16 +232,39 @@ function PaymentFormContent({
 
 export default function RealStripePaymentForm(props: RealStripePaymentFormProps) {
   const [stripeLoaded, setStripeLoaded] = useState(false);
+  const [stripeError, setStripeError] = useState<string | null>(null);
 
   useEffect(() => {
     stripePromise.then((stripe) => {
       if (stripe) {
         setStripeLoaded(true);
       } else {
-        props.onError('Stripe is not properly configured. Please contact support.');
+        const errorMsg = 'Stripe is not properly configured. Please contact support.';
+        setStripeError(errorMsg);
+        props.onError(errorMsg);
       }
+    }).catch((error) => {
+      const errorMsg = 'Failed to load Stripe. Please check your configuration.';
+      setStripeError(errorMsg);
+      props.onError(errorMsg);
     });
   }, [props]);
+
+  if (stripeError) {
+    return (
+      <div className="bg-red-50 border border-red-200 rounded-md p-4">
+        <div className="flex items-center">
+          <AlertCircle className="h-5 w-5 text-red-600 mr-2" />
+          <div className="text-sm text-red-800">
+            {stripeError}
+          </div>
+        </div>
+        <div className="mt-2 text-xs text-red-600">
+          Please ensure your Stripe keys are properly configured in your environment variables.
+        </div>
+      </div>
+    );
+  }
 
   if (!stripeLoaded) {
     return (
