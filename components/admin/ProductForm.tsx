@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { X, Save, Loader2, Upload, Image as ImageIcon } from 'lucide-react';
+import { X, Save, Loader2, Upload, Image as ImageIcon, List, Type } from 'lucide-react';
+import { parseBulletPoints, bulletPointsToText, hasBulletPoints, convertToBulletPoints } from '@/lib/bullet-point-parser';
 
 interface Product {
   id?: string;
@@ -68,11 +69,13 @@ export default function ProductForm({
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [isBulletMode, setIsBulletMode] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (product) {
       setFormData(product);
+      setIsBulletMode(hasBulletPoints(product.description));
       if (product.images) {
         try {
           const images = JSON.parse(product.images);
@@ -161,6 +164,20 @@ export default function ProductForm({
             ? parseFloat(value) || 0
             : value,
     }));
+  };
+
+  const toggleBulletMode = () => {
+    if (isBulletMode) {
+      // Convert bullet points back to plain text
+      const bulletPoints = parseBulletPoints(formData.description);
+      const plainText = bulletPoints.map(point => point.text).join('\n');
+      setFormData(prev => ({ ...prev, description: plainText }));
+    } else {
+      // Convert plain text to bullet points
+      const bulletText = convertToBulletPoints(formData.description);
+      setFormData(prev => ({ ...prev, description: bulletText }));
+    }
+    setIsBulletMode(!isBulletMode);
   };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -549,17 +566,50 @@ export default function ProductForm({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Description *
-            </label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-sm font-medium text-gray-700">
+                Description *
+              </label>
+              <button
+                type="button"
+                onClick={toggleBulletMode}
+                className={`flex items-center space-x-1 px-2 py-1 rounded text-xs font-medium transition-colors ${
+                  isBulletMode
+                    ? 'bg-blue-100 text-blue-700 border border-blue-200'
+                    : 'bg-gray-100 text-gray-600 border border-gray-200 hover:bg-gray-200'
+                }`}
+              >
+                {isBulletMode ? (
+                  <>
+                    <Type className="h-3 w-3" />
+                    <span>Plain Text</span>
+                  </>
+                ) : (
+                  <>
+                    <List className="h-3 w-3" />
+                    <span>Bullet Points</span>
+                  </>
+                )}
+              </button>
+            </div>
             <textarea
               name="description"
               value={formData.description}
               onChange={handleChange}
               required
-              rows={3}
+              rows={isBulletMode ? 6 : 3}
+              placeholder={
+                isBulletMode
+                  ? "Enter bullet points (one per line):\n• Feature 1\n• Feature 2\n• **Bold Feature**"
+                  : "Enter product description..."
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-500"
             />
+            {isBulletMode && (
+              <div className="text-xs text-gray-500 mt-1">
+                💡 Use <code>**text**</code> for bold text. Each line will become a bullet point.
+              </div>
+            )}
           </div>
 
           <div>
