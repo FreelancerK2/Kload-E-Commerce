@@ -240,15 +240,27 @@ export default function InvoiceGenerator({
             .overflow-x-auto { overflow-x: auto !important; }
             .rounded-lg { border-radius: 8px !important; }
             .shadow-sm { box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important; }
+            .table-fixed { table-layout: fixed !important; }
+            
+            /* Column widths */
+            .w-2\/5 { width: 40% !important; }
+            .w-1\/6 { width: 16.666667% !important; }
             
             /* Image styles - clean sizing */
             .w-16 { width: 40px !important; }
             .h-16 { height: 40px !important; }
-            .w-12 { width: 32px !important; }
-            .h-12 { height: 32px !important; }
+            .w-12 { width: 36px !important; }
+            .h-12 { height: 36px !important; }
             .object-cover { object-fit: cover !important; }
             .rounded-lg { border-radius: 4px !important; }
             .rounded { border-radius: 4px !important; }
+            
+            /* Text wrapping and overflow */
+            .break-words { word-wrap: break-word !important; word-break: break-word !important; }
+            .min-w-0 { min-width: 0 !important; }
+            .flex-1 { flex: 1 1 0% !important; }
+            .flex-shrink-0 { flex-shrink: 0 !important; }
+            .leading-tight { line-height: 1.25 !important; }
             
             /* Badge styles */
             .rounded-full { border-radius: 9999px !important; }
@@ -435,19 +447,19 @@ export default function InvoiceGenerator({
             <div className="mb-6">
               <h3 className="text-base font-bold text-gray-900 mb-2">Order Items:</h3>
               <div className="overflow-x-auto">
-                <table className="w-full border-collapse border border-gray-300 rounded-lg overflow-hidden">
+                <table className="w-full border-collapse border border-gray-300 rounded-lg overflow-hidden table-fixed">
                   <thead>
                     <tr className="bg-gray-100">
-                      <th className="border border-gray-300 px-3 py-2 text-left text-xs font-bold text-gray-900">
+                      <th className="border border-gray-300 px-4 py-3 text-left text-sm font-bold text-gray-900 w-2/5">
                         Product
                       </th>
-                      <th className="border border-gray-300 px-3 py-2 text-center text-xs font-bold text-gray-900">
+                      <th className="border border-gray-300 px-4 py-3 text-center text-sm font-bold text-gray-900 w-1/6">
                         Quantity
                       </th>
-                      <th className="border border-gray-300 px-3 py-2 text-right text-xs font-bold text-gray-900">
+                      <th className="border border-gray-300 px-4 py-3 text-right text-sm font-bold text-gray-900 w-1/6">
                         Unit Price
                       </th>
-                      <th className="border border-gray-300 px-3 py-2 text-right text-xs font-bold text-gray-900">
+                      <th className="border border-gray-300 px-4 py-3 text-right text-sm font-bold text-gray-900 w-1/6">
                         Total
                       </th>
                     </tr>
@@ -457,8 +469,8 @@ export default function InvoiceGenerator({
                       const firstImage = getFirstImage(item.image);
                       return (
                         <tr key={item.id} className="bg-white">
-                          <td className="border border-gray-300 px-3 py-2">
-                            <div className="flex items-center space-x-2">
+                          <td className="border border-gray-300 px-4 py-3">
+                            <div className="flex items-center space-x-3">
                               {firstImage && (
                                 <img
                                   src={
@@ -467,26 +479,26 @@ export default function InvoiceGenerator({
                                       : `data:image/jpeg;base64,${firstImage}`
                                   }
                                   alt={item.name}
-                                  className="w-10 h-10 object-cover rounded border border-gray-200"
+                                  className="w-12 h-12 object-cover rounded border border-gray-200 flex-shrink-0"
                                 />
                               )}
-                              <div>
-                                <p className="font-semibold text-gray-900 text-sm">
+                              <div className="min-w-0 flex-1">
+                                <p className="font-semibold text-gray-900 text-sm leading-tight break-words">
                                   {item.name}
                                 </p>
-                                <p className="text-xs text-gray-500">Premium Quality Product</p>
+                                <p className="text-xs text-gray-500 mt-1">Premium Quality Product</p>
                               </div>
                             </div>
                           </td>
-                          <td className="border border-gray-300 px-3 py-2 text-center">
-                            <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-bold">
+                          <td className="border border-gray-300 px-4 py-3 text-center">
+                            <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-bold">
                               {item.quantity}
                             </span>
                           </td>
-                          <td className="border border-gray-300 px-3 py-2 text-right text-gray-700 font-semibold text-sm">
+                          <td className="border border-gray-300 px-4 py-3 text-right text-gray-700 font-semibold text-sm">
                             {formatCurrency(item.price)}
                           </td>
-                          <td className="border border-gray-300 px-3 py-2 text-right font-bold text-gray-900 text-sm">
+                          <td className="border border-gray-300 px-4 py-3 text-right font-bold text-gray-900 text-sm">
                             {formatCurrency(item.price * item.quantity)}
                           </td>
                         </tr>
