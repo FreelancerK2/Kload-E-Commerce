@@ -123,13 +123,7 @@ export default function ProductCard({ product, viewMode }: ProductCardProps) {
       stockCount: product.stockCount,
     });
 
-    // Show success popup
-    setPopup({
-      isOpen: true,
-      type: 'success',
-      title: 'Added to Cart!',
-      message: `${product.name} has been added to your cart successfully.`,
-    });
+    // Success notification is handled by the store's toast system
   };
 
   const handleWishlistToggle = () => {
