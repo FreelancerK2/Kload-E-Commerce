@@ -119,9 +119,9 @@ export default function CheckoutPage() {
         })),
         guestInfo: isSignedIn
           ? {
-              firstName: user?.firstName || '',
-              lastName: user?.lastName || '',
-              email: user?.emailAddresses[0]?.emailAddress || '',
+              firstName: '',
+              lastName: '',
+              email: '',
             }
           : guestInfo,
         paymentIntentId,
