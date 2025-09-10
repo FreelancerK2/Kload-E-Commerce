@@ -6,7 +6,7 @@ import { useCartStore } from '@/lib/store';
 import { useUser } from '@clerk/nextjs';
 import CustomPopup from '@/components/CustomPopup';
 import ProcessedProductImage from '@/components/ProcessedProductImage';
-import DemoPaymentForm from '@/components/DemoPaymentForm';
+import RealisticFakePaymentForm from '@/components/RealisticFakePaymentForm';
 import { isStripeConfigured } from '@/lib/stripe';
 import StripeDebug from '@/components/StripeDebug';
 import {
@@ -376,7 +376,7 @@ export default function CheckoutPage() {
               </div>
 
               {/* Payment Form */}
-              <DemoPaymentForm
+              <RealisticFakePaymentForm
                 total={total}
                 onSuccess={handlePaymentSuccess}
                 onError={handlePaymentError}
