@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import SimpleLoginForm from '@/components/SimpleLoginForm';
+import OAuthLoginForm from '@/components/OAuthLoginForm';
 
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -52,7 +52,7 @@ export default function LoginPage() {
           {error}
         </div>
       )}
-      <SimpleLoginForm />
+      <OAuthLoginForm />
     </div>
   );
 }

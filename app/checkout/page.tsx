@@ -3,10 +3,10 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useCartStore } from '@/lib/store';
-// import { useUser } from '@clerk/nextjs';
+import { useUser } from '@clerk/nextjs';
 import CustomPopup from '@/components/CustomPopup';
 import ProcessedProductImage from '@/components/ProcessedProductImage';
-import RealStripePaymentForm from '@/components/RealStripePaymentForm';
+import DemoPaymentForm from '@/components/DemoPaymentForm';
 import { isStripeConfigured } from '@/lib/stripe';
 import StripeDebug from '@/components/StripeDebug';
 import {
@@ -25,9 +25,7 @@ import {
 
 export default function CheckoutPage() {
   const { items, getTotal, clearCart } = useCartStore();
-  // const { user, isSignedIn } = useUser();
-  const user = null;
-  const isSignedIn = false;
+  const { user, isSignedIn } = useUser();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [guestInfo, setGuestInfo] = useState({
@@ -119,9 +117,9 @@ export default function CheckoutPage() {
         })),
         guestInfo: isSignedIn
           ? {
-              firstName: '',
-              lastName: '',
-              email: '',
+              firstName: user?.firstName || '',
+              lastName: user?.lastName || '',
+              email: user?.emailAddresses[0]?.emailAddress || '',
             }
           : guestInfo,
         paymentIntentId,
@@ -196,7 +194,7 @@ export default function CheckoutPage() {
                 <div className="space-y-4">
                   <div className="p-4 bg-blue-50 rounded-lg">
                     <p className="text-sm text-blue-800">
-                      Welcome back! Your account information
+                      Welcome back, {user?.firstName}! Your account information
                       will be used for this order.
                     </p>
                   </div>
@@ -207,7 +205,7 @@ export default function CheckoutPage() {
                       </label>
                       <input
                         type="text"
-                        value={''}
+                        value={user?.firstName || ''}
                         disabled
                         className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-900"
                       />
@@ -218,7 +216,7 @@ export default function CheckoutPage() {
                       </label>
                       <input
                         type="text"
-                        value={''}
+                        value={user?.lastName || ''}
                         disabled
                         className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-900"
                       />
@@ -230,7 +228,7 @@ export default function CheckoutPage() {
                     </label>
                     <input
                       type="email"
-                        value={''}
+                      value={user?.emailAddresses[0]?.emailAddress || ''}
                       disabled
                       className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-900"
                     />
@@ -378,17 +376,16 @@ export default function CheckoutPage() {
               </div>
 
               {/* Payment Form */}
-              {isStripeConfigured() ? (
-                <RealStripePaymentForm
-                  total={total}
-                  onSuccess={handlePaymentSuccess}
-                  onError={handlePaymentError}
-                  isLoading={isLoading}
-                  setIsLoading={setIsLoading}
-                  isSignedIn={isSignedIn || false}
-                  guestInfo={guestInfo}
-                />
-              ) : (
+              <DemoPaymentForm
+                total={total}
+                onSuccess={handlePaymentSuccess}
+                onError={handlePaymentError}
+                isLoading={isLoading}
+                setIsLoading={setIsLoading}
+                isSignedIn={isSignedIn || false}
+                guestInfo={guestInfo}
+              />
+              {false && (
                 <div className="space-y-6">
                   <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4">
                     <div className="flex items-center">

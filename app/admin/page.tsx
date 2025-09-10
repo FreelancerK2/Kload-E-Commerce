@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-// import { useUser, UserButton } from '@clerk/nextjs';
+import { useUser, UserButton } from '@clerk/nextjs';
 import Link from 'next/link';
 import AdminLayout from '@/components/AdminLayout';
 import { isAdminUser } from '@/lib/admin';
@@ -41,9 +41,7 @@ interface DashboardStats {
 }
 
 export default function AdminDashboard() {
-  // const { user, isSignedIn } = useUser();
-  const user = null;
-  const isSignedIn = false;
+  const { user, isSignedIn } = useUser();
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -1444,15 +1442,14 @@ export default function AdminDashboard() {
                     </div>
                     <div className="text-xs text-red-600">Administrator</div>
                   </div>
-                  {/* <UserButton
+                  <UserButton
                     afterSignOutUrl="/"
                     appearance={{
                       elements: {
                         avatarBox: 'w-6 h-6 sm:w-8 sm:h-8',
                       },
                     }}
-                  /> */}
-                  <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gray-300 rounded-full"></div>
+                  />
                 </div>
               )}
             </div>
