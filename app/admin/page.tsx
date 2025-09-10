@@ -1403,7 +1403,7 @@ export default function AdminDashboard() {
             {/* Left side - Logo and Admin Badge */}
             <div className="flex items-center space-x-1 sm:space-x-4">
               <div className="flex items-center space-x-1 sm:space-x-2">
-                <div className="w-7 h-7 sm:w-10 sm:h-10 bg-gradient-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center shadow-lg">
+                <div className="w-7 h-7 sm:w-10 sm:h-10 bg-black rounded-full flex items-center justify-center shadow-lg">
                   <span className="text-white text-sm sm:text-xl font-bold">
                     K
                   </span>
@@ -1412,7 +1412,7 @@ export default function AdminDashboard() {
                   <h1 className="text-sm sm:text-xl font-bold text-gray-900">
                     Kload Admin
                   </h1>
-                  <span className="text-xs text-red-600 font-medium hidden sm:block">
+                  <span className="text-xs text-gray-600 font-medium hidden sm:block">
                     Administration Panel
                   </span>
                 </div>

@@ -70,12 +70,12 @@ export default function AdminNavbar() {
           {/* Left side - Logo and Admin Badge */}
           <div className="flex items-center space-x-4">
             <Link href="/admin" className="flex items-center space-x-2">
-              <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-red-600 rounded-lg flex items-center justify-center shadow-lg">
+              <div className="w-10 h-10 bg-black rounded-lg flex items-center justify-center shadow-lg">
                 <span className="text-white text-xl font-bold">K</span>
               </div>
               <div className="flex flex-col">
                 <h1 className="text-xl font-bold text-gray-900">Kload Admin</h1>
-                <span className="text-xs text-red-600 font-medium">
+                <span className="text-xs text-gray-600 font-medium">
                   Administration Panel
                 </span>
               </div>

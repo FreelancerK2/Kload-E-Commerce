@@ -498,6 +498,29 @@ export default function ProductDetailPage({
             </div>
           </div>
 
+          {/* Product Description - Moved below images */}
+          <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+            <h4 className="font-semibold text-gray-900 mb-2">
+              Product Description
+            </h4>
+            {hasBulletPoints(product.description) ? (
+              <ul className="text-gray-600 text-sm leading-relaxed space-y-1">
+                {parseBulletPoints(product.description).map((point, index) => (
+                  <li key={index} className="flex items-start">
+                    <span className="text-gray-400 mr-2 mt-0.5">•</span>
+                    <span className={point.isBold ? 'font-semibold text-gray-800' : ''}>
+                      {point.text}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-gray-600 text-sm leading-relaxed">
+                {product.description}
+              </p>
+            )}
+          </div>
+
           {/* Product Info */}
           <div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
@@ -515,29 +538,6 @@ export default function ProductDetailPage({
 
             <div className="text-3xl font-bold text-gray-900 mb-6">
               ${product.price.toFixed(2)}
-            </div>
-
-            {/* Product Description */}
-            <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-              <h4 className="font-semibold text-gray-900 mb-2">
-                Product Description
-              </h4>
-              {hasBulletPoints(product.description) ? (
-                <ul className="text-gray-600 text-sm leading-relaxed space-y-1">
-                  {parseBulletPoints(product.description).map((point, index) => (
-                    <li key={index} className="flex items-start">
-                      <span className="text-gray-400 mr-2 mt-0.5">•</span>
-                      <span className={point.isBold ? 'font-semibold text-gray-800' : ''}>
-                        {point.text}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="text-gray-600 text-sm leading-relaxed">
-                  {product.description}
-                </p>
-              )}
             </div>
 
             {/* Discount Information */}
