@@ -21,7 +21,17 @@ import {
 const stripePromise = (async () => {
   try {
     const { loadStripe } = await import('@stripe/stripe-js');
-    const key = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
+    
+    // Get the key from multiple possible sources
+    const key = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || 
+                (typeof window !== 'undefined' ? (window as any).__STRIPE_PUBLISHABLE_KEY__ : null);
+    
+    console.log('Stripe key check:', {
+      hasKey: !!key,
+      keyLength: key?.length,
+      keyStart: key?.substring(0, 10),
+      envVar: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY?.substring(0, 10)
+    });
     
     // Check if key is properly configured
     if (!key || 

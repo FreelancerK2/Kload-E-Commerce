@@ -376,17 +376,25 @@ export default function CheckoutPage() {
               </div>
 
               {/* Payment Form */}
-              {isStripeConfigured() ? (
-                <RealStripePaymentForm
-                  total={total}
-                  onSuccess={handlePaymentSuccess}
-                  onError={handlePaymentError}
-                  isLoading={isLoading}
-                  setIsLoading={setIsLoading}
-                  isSignedIn={isSignedIn || false}
-                  guestInfo={guestInfo}
-                />
-              ) : (
+              {(() => {
+                const isConfigured = isStripeConfigured();
+                console.log('Stripe configuration check:', {
+                  isConfigured,
+                  hasEnvVar: !!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
+                  envVarStart: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY?.substring(0, 10)
+                });
+                
+                return isConfigured ? (
+                  <RealStripePaymentForm
+                    total={total}
+                    onSuccess={handlePaymentSuccess}
+                    onError={handlePaymentError}
+                    isLoading={isLoading}
+                    setIsLoading={setIsLoading}
+                    isSignedIn={isSignedIn || false}
+                    guestInfo={guestInfo}
+                  />
+                ) : (
                 <div className="space-y-6">
                   <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4">
                     <div className="flex items-center">
