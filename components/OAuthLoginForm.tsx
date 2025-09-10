@@ -48,7 +48,7 @@ export default function OAuthLoginForm() {
             routing="path"
             path="/login"
             signUpUrl="/signup"
-            redirectUrl="/"
+            fallbackRedirectUrl="/"
           />
         </div>
 
