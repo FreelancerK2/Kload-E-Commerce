@@ -107,34 +107,29 @@ export default function InvoiceGenerator({
       // Header - Company Logo and Name
       yPosition += 10;
       
-      // Company name with logo positioned over the "E" - centered layout
+      // Company name with logo in front - centered layout
       const companyName = 'Kload';
-      const logoSize = 20; // Larger logo
+      const logoSize = 12; // Smaller logo
       const companyNameWidth = pdf.getTextWidth(companyName);
-      const totalWidth = companyNameWidth; // Just the text width for centering
+      const totalWidth = logoSize + 8 + companyNameWidth; // logo + spacing + text
       const startX = (pageWidth - totalWidth) / 2;
       
-      // Add company name first
+      // Draw logo circle first (in front of text)
+      pdf.setFillColor('#000000');
+      pdf.circle(startX + logoSize/2, yPosition + logoSize/2, logoSize/2, 'F');
+      
+      // Add larger "K" in logo
+      pdf.setTextColor('#FFFFFF');
+      pdf.setFontSize(14); // Larger "K" font relative to logo size
+      pdf.setFont('helvetica', 'bold');
+      const kWidth = pdf.getTextWidth('K');
+      pdf.text('K', startX + logoSize/2 - kWidth/2, yPosition + logoSize/2 + 2);
+      
+      // Add company name next to logo
       pdf.setTextColor('#000000');
       pdf.setFontSize(28);
       pdf.setFont('helvetica', 'bold');
-      pdf.text(companyName, startX, yPosition + 10);
-      
-      // Calculate position of "E" in "Kload" to position logo over it
-      const ePosition = pdf.getTextWidth('Klo'); // Width of "Klo" to find "E" position
-      const logoX = startX + ePosition - logoSize/2; // Center logo over "E"
-      const logoY = yPosition + 2; // Slightly above the text
-      
-      // Draw larger logo circle
-      pdf.setFillColor('#000000');
-      pdf.circle(logoX + logoSize/2, logoY + logoSize/2, logoSize/2, 'F');
-      
-      // Add larger, bolder "K" in logo
-      pdf.setTextColor('#FFFFFF');
-      pdf.setFontSize(16); // Larger font
-      pdf.setFont('helvetica', 'bold');
-      const kWidth = pdf.getTextWidth('K');
-      pdf.text('K', logoX + logoSize/2 - kWidth/2, logoY + logoSize/2 + 3);
+      pdf.text(companyName, startX + logoSize + 8, yPosition + 10);
       
       yPosition += 20;
       
