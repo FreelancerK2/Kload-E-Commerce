@@ -110,8 +110,15 @@ export default function InvoiceGenerator({
       // Company name with logo in front - centered layout
       const companyName = 'Kload';
       const logoSize = 12; // Smaller logo
+      const spacing = 3; // Space between logo and text
+      
+      // Set font to calculate text width accurately
+      pdf.setFontSize(28);
+      pdf.setFont('helvetica', 'bold');
       const companyNameWidth = pdf.getTextWidth(companyName);
-      const totalWidth = logoSize + 3 + companyNameWidth; // logo + reduced spacing + text
+      
+      // Calculate total width more accurately
+      const totalWidth = logoSize + spacing + companyNameWidth;
       const startX = (pageWidth - totalWidth) / 2;
       
       // Draw logo circle first (in front of text)
@@ -129,7 +136,7 @@ export default function InvoiceGenerator({
       pdf.setTextColor('#000000');
       pdf.setFontSize(28);
       pdf.setFont('helvetica', 'bold');
-      pdf.text(companyName, startX + logoSize + 3, yPosition + 10);
+      pdf.text(companyName, startX + logoSize + spacing, yPosition + 10);
       
       yPosition += 20;
       
