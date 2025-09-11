@@ -52,10 +52,31 @@ export default function RealisticFakePaymentForm({
   // Card type detection
   const detectCardType = (number: string) => {
     const cleanNumber = number.replace(/\s/g, '');
+    
+    // Visa: starts with 4
     if (cleanNumber.startsWith('4')) return 'visa';
-    if (cleanNumber.startsWith('5') || cleanNumber.startsWith('2')) return 'mastercard';
-    if (cleanNumber.startsWith('3')) return 'amex';
-    if (cleanNumber.startsWith('6')) return 'discover';
+    
+    // Mastercard: starts with 5 (51-55) or 2 (2221-2720)
+    if (cleanNumber.startsWith('5') && cleanNumber.length >= 2) {
+      const firstTwo = parseInt(cleanNumber.substring(0, 2));
+      if (firstTwo >= 51 && firstTwo <= 55) return 'mastercard';
+    }
+    if (cleanNumber.startsWith('2') && cleanNumber.length >= 4) {
+      const firstFour = parseInt(cleanNumber.substring(0, 4));
+      if (firstFour >= 2221 && firstFour <= 2720) return 'mastercard';
+    }
+    
+    // American Express: starts with 34 or 37
+    if (cleanNumber.startsWith('34') || cleanNumber.startsWith('37')) return 'amex';
+    
+    // Discover: starts with 6 (6011, 65, 644-649)
+    if (cleanNumber.startsWith('6011')) return 'discover';
+    if (cleanNumber.startsWith('65')) return 'discover';
+    if (cleanNumber.length >= 3) {
+      const firstThree = parseInt(cleanNumber.substring(0, 3));
+      if (firstThree >= 644 && firstThree <= 649) return 'discover';
+    }
+    
     return '';
   };
 
@@ -256,15 +277,49 @@ export default function RealisticFakePaymentForm({
   const getCardTypeIcon = () => {
     switch (cardType) {
       case 'visa':
-        return '💳';
+        return (
+          <div className="w-8 h-5 bg-white border border-gray-200 rounded flex items-center justify-center">
+            <svg viewBox="0 0 24 16" className="w-6 h-4">
+              <rect width="24" height="16" rx="2" fill="#1A1F71"/>
+              <text x="12" y="11" textAnchor="middle" fill="white" fontSize="8" fontWeight="bold">VISA</text>
+            </svg>
+          </div>
+        );
       case 'mastercard':
-        return '💳';
+        return (
+          <div className="w-8 h-5 bg-white border border-gray-200 rounded flex items-center justify-center">
+            <svg viewBox="0 0 24 16" className="w-6 h-4">
+              <rect width="24" height="16" rx="2" fill="#EB001B"/>
+              <circle cx="9" cy="8" r="4" fill="#F79E1B"/>
+              <circle cx="15" cy="8" r="4" fill="#FF5F00"/>
+              <path d="M12 4c-2.2 0-4 1.8-4 4s1.8 4 4 4 4-1.8 4-4-1.8-4-4-4z" fill="#EB001B"/>
+            </svg>
+          </div>
+        );
       case 'amex':
-        return '💳';
+        return (
+          <div className="w-8 h-5 bg-white border border-gray-200 rounded flex items-center justify-center">
+            <svg viewBox="0 0 24 16" className="w-6 h-4">
+              <rect width="24" height="16" rx="2" fill="#006FCF"/>
+              <text x="12" y="11" textAnchor="middle" fill="white" fontSize="6" fontWeight="bold">AMEX</text>
+            </svg>
+          </div>
+        );
       case 'discover':
-        return '💳';
+        return (
+          <div className="w-8 h-5 bg-white border border-gray-200 rounded flex items-center justify-center">
+            <svg viewBox="0 0 24 16" className="w-6 h-4">
+              <rect width="24" height="16" rx="2" fill="#FF6000"/>
+              <text x="12" y="11" textAnchor="middle" fill="white" fontSize="5" fontWeight="bold">DISCOVER</text>
+            </svg>
+          </div>
+        );
       default:
-        return '💳';
+        return (
+          <div className="w-8 h-5 bg-gray-100 border border-gray-200 rounded flex items-center justify-center">
+            <CreditCard className="w-4 h-4 text-gray-400" />
+          </div>
+        );
     }
   };
 
@@ -310,6 +365,7 @@ export default function RealisticFakePaymentForm({
           <label htmlFor="card-number" className="block text-sm font-medium text-gray-700 mb-2">
             Card Number
           </label>
+          {/* Test card numbers: Visa: 4111 1111 1111 1111, Mastercard: 5555 5555 5555 4444, Amex: 3782 822463 10005 */}
           <div className="relative">
             <input
               type="text"
@@ -324,7 +380,7 @@ export default function RealisticFakePaymentForm({
               required
             />
             <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
-              <span className="text-lg">{getCardTypeIcon()}</span>
+              {getCardTypeIcon()}
             </div>
           </div>
           {errors.cardNumber && (
