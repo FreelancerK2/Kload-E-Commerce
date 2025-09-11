@@ -133,6 +133,10 @@ export default function InvoiceGenerator({
       
       yPosition += 20;
       
+      // Add tagline beneath logo and text
+      addCenteredText('Premium E-commerce Store', yPosition, { size: 14, color: '#6b7280' });
+      yPosition += 15;
+      
       // Bill To and Invoice Details
       const sectionWidth = (contentWidth - 20) / 2;
       
