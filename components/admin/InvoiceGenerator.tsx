@@ -423,7 +423,7 @@ export default function InvoiceGenerator({
                       const firstImage = getFirstImage(item.image);
                       return (
                         <tr key={item.id} className="bg-white">
-                          <td className="border border-gray-300 px-4 py-3 align-top w-2/5">
+                          <td className="border border-gray-300 px-4 py-4 align-top w-2/5">
                             <div className="flex items-start space-x-3">
                               {firstImage && (
                                 <img
@@ -444,15 +444,15 @@ export default function InvoiceGenerator({
                               </div>
                             </div>
                           </td>
-                          <td className="border border-gray-300 px-4 py-3 text-center w-1/6">
+                          <td className="border border-gray-300 px-4 py-4 text-center w-1/6 align-top">
                             <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-bold">
                               {item.quantity}
                             </span>
                           </td>
-                          <td className="border border-gray-300 px-4 py-3 text-right text-gray-700 font-semibold text-sm w-1/6">
+                          <td className="border border-gray-300 px-4 py-4 text-right text-gray-700 font-semibold text-sm w-1/6 align-top">
                             {formatCurrency(item.price)}
                           </td>
-                          <td className="border border-gray-300 px-4 py-3 text-right font-bold text-gray-900 text-sm w-1/6">
+                          <td className="border border-gray-300 px-4 py-4 text-right font-bold text-gray-900 text-sm w-1/6 align-top">
                             {formatCurrency(item.price * item.quantity)}
                           </td>
                         </tr>
@@ -464,7 +464,7 @@ export default function InvoiceGenerator({
             </div>
 
             {/* Total */}
-            <div className="flex justify-end mb-6">
+            <div className="flex justify-end mt-8 mb-8">
               <div className="text-right p-4">
                 <div className="flex items-center space-x-3">
                   <span className="text-lg font-bold text-gray-900">Total:</span>
@@ -476,8 +476,8 @@ export default function InvoiceGenerator({
             </div>
 
             {/* Footer */}
-            <div className="mt-6 pt-4 text-center">
-              <p className="text-base font-bold text-gray-900 mb-1">Thank you for your business!</p>
+            <div className="mt-8 pt-6 text-center border-t border-gray-200">
+              <p className="text-base font-bold text-gray-900 mb-2">Thank you for your business!</p>
               <p className="text-sm text-gray-600">For support, please contact us at support@kload.com</p>
             </div>
           </div>
