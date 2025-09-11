@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
 
     // Get recent orders with user information
     const recentOrders = await prisma.order.findMany({
-      take: 10,
+      take: 20,
       orderBy: {
         createdAt: 'desc',
       },

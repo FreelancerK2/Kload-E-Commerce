@@ -29,18 +29,38 @@ export async function GET(request: NextRequest) {
               ...item,
               product: product
             });
+          } else {
+            // Include item even if product is not found, with placeholder data
+            validItems.push({
+              ...item,
+              product: {
+                id: item.productId,
+                name: 'Product Not Found',
+                images: '',
+                price: item.price
+              }
+            });
           }
         } catch (error) {
-          console.log(`Product ${item.productId} not found, skipping item`);
+          console.log(`Product ${item.productId} not found, including with placeholder`);
+          // Include item even if there's an error, with placeholder data
+          validItems.push({
+            ...item,
+            product: {
+              id: item.productId,
+              name: 'Product Not Found',
+              images: '',
+              price: item.price
+            }
+          });
         }
       }
       
-      if (validItems.length > 0) {
-        validOrders.push({
-          ...order,
-          items: validItems
-        });
-      }
+      // Include all orders, even if they have no valid items
+      validOrders.push({
+        ...order,
+        items: validItems
+      });
     }
 
     // Transform orders to match the frontend expected structure
