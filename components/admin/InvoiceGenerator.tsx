@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { FileText, Download, X } from 'lucide-react';
 import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
 
 interface OrderItem {
   id: string;
@@ -21,7 +20,7 @@ interface User {
 
 interface Order {
   id: string;
-  stripeSessionId: string | null;
+  stripeSessionId: string;
   total: number;
   status: string;
   createdAt: string;
@@ -60,281 +59,224 @@ export default function InvoiceGenerator({
     try {
       console.log('🔄 Starting PDF generation...');
       
-      const invoiceElement = document.getElementById('invoice-content');
-      if (!invoiceElement) {
-        throw new Error('Invoice content not found');
+      // Create PDF with proper text rendering
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pageWidth = 210;
+      const pageHeight = 297;
+      const margin = 20;
+      const contentWidth = pageWidth - (2 * margin);
+      
+      let yPosition = margin;
+      
+      // Helper function to add text with proper font
+      const addText = (text: string, x: number, y: number, options: any = {}) => {
+        pdf.setFont('helvetica', options.style || 'normal');
+        pdf.setFontSize(options.size || 12);
+        pdf.setTextColor(options.color || '#000000');
+        pdf.text(text, x, y);
+      };
+      
+      // Helper function to add centered text
+      const addCenteredText = (text: string, y: number, options: any = {}) => {
+        pdf.setFont('helvetica', options.style || 'normal');
+        pdf.setFontSize(options.size || 12);
+        pdf.setTextColor(options.color || '#000000');
+        const textWidth = pdf.getTextWidth(text);
+        const x = (pageWidth - textWidth) / 2;
+        pdf.text(text, x, y);
+      };
+      
+      // Helper function to draw a line
+      const drawLine = (x1: number, y1: number, x2: number, y2: number, color: string = '#000000') => {
+        pdf.setDrawColor(color);
+        pdf.line(x1, y1, x2, y2);
+      };
+      
+      // Helper function to draw a rectangle
+      const drawRect = (x: number, y: number, width: number, height: number, fillColor?: string, strokeColor?: string) => {
+        if (fillColor) {
+          pdf.setFillColor(fillColor);
+          pdf.rect(x, y, width, height, 'F');
+        }
+        if (strokeColor) {
+          pdf.setDrawColor(strokeColor);
+          pdf.rect(x, y, width, height, 'S');
+        }
+      };
+      
+      // Header - Company Logo and Name
+      yPosition += 10;
+      
+      // Draw logo circle
+      const logoSize = 15;
+      const logoX = (pageWidth - logoSize) / 2;
+      pdf.setFillColor('#000000');
+      pdf.circle(logoX + logoSize/2, yPosition + logoSize/2, logoSize/2, 'F');
+      
+      // Add "K" in logo
+      pdf.setTextColor('#FFFFFF');
+      pdf.setFontSize(12);
+      pdf.setFont('helvetica', 'bold');
+      const kWidth = pdf.getTextWidth('K');
+      pdf.text('K', logoX + logoSize/2 - kWidth/2, yPosition + logoSize/2 + 2);
+      
+      yPosition += logoSize + 5;
+      
+      // Company name
+      addCenteredText('Kload', yPosition, { size: 24, style: 'bold', color: '#111827' });
+      yPosition += 8;
+      addCenteredText('Premium E-commerce Store', yPosition, { size: 14, color: '#4b5563' });
+      yPosition += 10;
+      
+      // Company tagline box
+      const taglineY = yPosition;
+      const taglineHeight = 15;
+      drawRect(margin, taglineY, contentWidth, taglineHeight, '#f9fafb', '#e5e7eb');
+      addCenteredText('Your One-Stop Electronic Market', taglineY + 6, { size: 12, style: 'bold', color: '#1f2937' });
+      addCenteredText('Quality Electronics • Fast Delivery • 24/7 Support', taglineY + 11, { size: 10, color: '#4b5563' });
+      yPosition += taglineHeight + 15;
+      
+      // Bill To and Invoice Details
+      const sectionWidth = (contentWidth - 10) / 2;
+      
+      // Bill To section
+      drawRect(margin, yPosition, sectionWidth, 25, '#f9fafb', '#e5e7eb');
+      addText('Bill To:', margin + 5, yPosition + 8, { size: 12, style: 'bold', color: '#111827' });
+      
+      if (order.user) {
+        addText(`${order.user.firstName} ${order.user.lastName}`, margin + 5, yPosition + 15, { size: 11, style: 'bold', color: '#111827' });
+        addText(order.user.email, margin + 5, yPosition + 20, { size: 10, color: '#4b5563' });
+      } else {
+        addText('Guest Customer', margin + 5, yPosition + 15, { size: 10, color: '#6b7280' });
       }
       
-      console.log('✅ Invoice element found:', invoiceElement);
-
-      // Create canvas from HTML element with optimized settings
-      console.log('🔄 Creating optimized canvas from HTML...');
-      const canvas = await html2canvas(invoiceElement, {
-        scale: 2, // Optimal scale for quality vs performance
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: '#ffffff',
-        logging: false,
-        width: invoiceElement.offsetWidth,
-        height: invoiceElement.offsetHeight,
-        scrollX: 0,
-        scrollY: 0,
-        windowWidth: invoiceElement.offsetWidth,
-        windowHeight: invoiceElement.offsetHeight,
-        ignoreElements: (element) => {
-          // Skip elements that might cause issues
-          if (element.tagName === 'SCRIPT' || element.tagName === 'STYLE') {
-            return true;
-          }
-          // Skip elements with oklch colors
-          const htmlElement = element as HTMLElement;
-          if (htmlElement.style && htmlElement.style.color && htmlElement.style.color.includes('oklch')) {
-            return true;
-          }
-          return false;
-        },
-        onclone: (clonedDoc) => {
-          // Create a comprehensive style override that maintains design but uses safe colors
-          const style = clonedDoc.createElement('style');
-          style.textContent = `
-            /* Base styles with safe colors - prevent oklch issues */
-            * {
-              color: #111827 !important;
-            }
-            
-            body, html { 
-              font-family: Arial, sans-serif !important; 
-              margin: 0 !important; 
-              padding: 0 !important; 
-              color: #111827 !important;
-            }
-            
-            /* Invoice container - high quality PDF design */
-            #invoice-content { 
-              padding: 32px !important; 
-              background: white !important; 
-              max-width: 800px !important; 
-              margin: 0 auto !important; 
-              font-size: 14px !important;
-              line-height: 1.4 !important;
-              font-family: 'Arial', 'Helvetica', sans-serif !important;
-              color: #000000 !important;
-            }
-            
-            /* Header styles - improved PDF spacing */
-            .text-center { text-align: center !important; }
-            .mb-10 { margin-bottom: 24px !important; }
-            .mb-8 { margin-bottom: 20px !important; }
-            .mb-6 { margin-bottom: 16px !important; }
-            .mb-5 { margin-bottom: 12px !important; }
-            .mb-4 { margin-bottom: 10px !important; }
-            .mb-3 { margin-bottom: 8px !important; }
-            .mb-2 { margin-bottom: 6px !important; }
-            .mb-1 { margin-bottom: 4px !important; }
-            .mt-8 { margin-top: 20px !important; }
-            .mt-6 { margin-top: 16px !important; }
-            .mt-5 { margin-top: 12px !important; }
-            .pt-6 { padding-top: 16px !important; }
-            .pt-4 { padding-top: 10px !important; }
-            .pt-3 { padding-top: 8px !important; }
-            
-            /* Logo and company name - enhanced PDF sizing */
-            .w-12 { width: 48px !important; }
-            .h-12 { height: 48px !important; }
-            .w-14 { width: 56px !important; }
-            .h-14 { height: 56px !important; }
-            .w-16 { width: 64px !important; }
-            .h-16 { height: 64px !important; }
-            .w-20 { width: 72px !important; }
-            .h-20 { height: 72px !important; }
-            .bg-black { background: #000000 !important; }
-            .bg-gradient-to-br { background: #000000 !important; }
-            .rounded-full { border-radius: 50% !important; }
-            .rounded-xl { border-radius: 6px !important; }
-            .text-white { color: #ffffff !important; }
-            .text-lg { font-size: 14px !important; }
-            .text-xl { font-size: 16px !important; }
-            .text-2xl { font-size: 18px !important; }
-            .text-3xl { font-size: 20px !important; }
-            .font-bold { font-weight: bold !important; }
-            .text-4xl { font-size: 22px !important; }
-            .text-5xl { font-size: 24px !important; }
-            
-            /* Force all colors to use standard hex values to avoid oklch issues */
-            * { 
-              color: inherit !important; 
-            }
-            
-            /* Override any oklch colors that might be generated by Tailwind */
-            [style*="oklch"] { 
-              color: #111827 !important; 
-            }
-            
-            /* Ensure all text elements use standard colors */
-            h1, h2, h3, h4, h5, h6, p, span, div, td, th { 
-              color: #111827 !important; 
-            }
-            
-            /* Text colors - using standard hex colors */
-            .text-gray-900, .text-gray-900 * { color: #111827 !important; }
-            .text-gray-600, .text-gray-600 * { color: #4b5563 !important; }
-            .text-gray-500, .text-gray-500 * { color: #6b7280 !important; }
-            .text-gray-700, .text-gray-700 * { color: #374151 !important; }
-            .text-gray-800, .text-gray-800 * { color: #1f2937 !important; }
-            .text-white, .text-white * { color: #ffffff !important; }
-            
-            /* Background colors - using standard hex colors */
-            .bg-gray-50, .bg-gray-50 * { background: #f9fafb !important; }
-            .bg-gray-100, .bg-gray-100 * { background: #f3f4f6 !important; }
-            .bg-gray-200, .bg-gray-200 * { background: #e5e7eb !important; }
-            .bg-blue-100, .bg-blue-100 * { background: #dbeafe !important; }
-            .bg-green-100, .bg-green-100 * { background: #dcfce7 !important; }
-            .bg-yellow-100, .bg-yellow-100 * { background: #fef3c7 !important; }
-            .bg-red-100, .bg-red-100 * { background: #fee2e2 !important; }
-            .bg-black, .bg-black * { background: #000000 !important; }
-            
-            /* Text colors for badges - using standard hex colors */
-            .text-blue-800, .text-blue-800 * { color: #1e40af !important; }
-            .text-green-800, .text-green-800 * { color: #166534 !important; }
-            .text-yellow-800, .text-yellow-800 * { color: #854d0e !important; }
-            .text-red-800, .text-red-800 * { color: #991b1b !important; }
-            
-            /* Borders */
-            .border { border: 1px solid #d1d5db !important; }
-            .border-2 { border: 2px solid #d1d5db !important; }
-            .border-gray-200 { border-color: #e5e7eb !important; }
-            .border-gray-300 { border-color: #d1d5db !important; }
-            .border-t { border-top: 1px solid #d1d5db !important; }
-            .border-t-2 { border-top: 2px solid #d1d5db !important; }
-            .border-b { border-bottom: 1px solid #d1d5db !important; }
-            .border-b-2 { border-bottom: 2px solid #d1d5db !important; }
-            
-            /* Padding and margins - enhanced PDF spacing */
-            .p-3 { padding: 8px !important; }
-            .p-4 { padding: 10px !important; }
-            .p-6 { padding: 16px !important; }
-            .p-8 { padding: 20px !important; }
-            .px-3 { padding-left: 8px !important; padding-right: 8px !important; }
-            .px-4 { padding-left: 10px !important; padding-right: 10px !important; }
-            .px-6 { padding-left: 16px !important; padding-right: 16px !important; }
-            .py-1 { padding-top: 4px !important; padding-bottom: 4px !important; }
-            .py-2 { padding-top: 6px !important; padding-bottom: 6px !important; }
-            .py-3 { padding-top: 8px !important; padding-bottom: 8px !important; }
-            .py-4 { padding-top: 10px !important; padding-bottom: 10px !important; }
-            .pb-2 { padding-bottom: 6px !important; }
-            .space-y-1 > * + * { margin-top: 4px !important; }
-            .space-y-2 > * + * { margin-top: 6px !important; }
-            
-            /* Layout */
-            .grid { display: grid !important; }
-            .grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)) !important; }
-            .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
-            .gap-8 { gap: 32px !important; }
-            .flex { display: flex !important; }
-            .items-center { align-items: center !important; }
-            .justify-center { justify-content: center !important; }
-            .justify-end { justify-content: flex-end !important; }
-            .justify-between { justify-content: space-between !important; }
-            .space-x-4 > * + * { margin-left: 16px !important; }
-            .space-x-8 > * + * { margin-left: 32px !important; }
-            .space-y-2 > * + * { margin-top: 8px !important; }
-            .text-left { text-align: left !important; }
-            .text-right { text-align: right !important; }
-            .text-center { text-align: center !important; }
-            
-            /* Table styles */
-            .w-full { width: 100% !important; }
-            .border-collapse { border-collapse: collapse !important; }
-            .overflow-x-auto { overflow-x: auto !important; }
-            .rounded-lg { border-radius: 8px !important; }
-            .shadow-sm { box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important; }
-            
-            /* Column widths - fixed widths to prevent wrapping */
-            th[style*="width: 50%"] { width: 50% !important; }
-            th[style*="width: 15%"] { width: 15% !important; }
-            th[style*="width: 17.5%"] { width: 17.5% !important; }
-            
-            /* Image styles - enhanced PDF sizing */
-            .w-16 { width: 48px !important; }
-            .h-16 { height: 48px !important; }
-            .w-12 { width: 44px !important; }
-            .h-12 { height: 44px !important; }
-            .object-cover { object-fit: cover !important; }
-            .rounded-lg { border-radius: 6px !important; }
-            .rounded { border-radius: 6px !important; }
-            
-            /* Text wrapping and overflow - prevent wrapping */
-            .whitespace-nowrap { white-space: nowrap !important; }
-            .overflow-hidden { overflow: hidden !important; }
-            .text-ellipsis { text-overflow: ellipsis !important; }
-            .min-w-0 { min-width: 0 !important; }
-            .flex-1 { flex: 1 1 0% !important; }
-            .flex-shrink-0 { flex-shrink: 0 !important; }
-            .leading-tight { line-height: 1.25 !important; }
-            
-            /* Badge styles */
-            .rounded-full { border-radius: 9999px !important; }
-            .px-2 { padding-left: 8px !important; padding-right: 8px !important; }
-            .px-3 { padding-left: 12px !important; padding-right: 12px !important; }
-            .px-4 { padding-left: 16px !important; padding-right: 16px !important; }
-            .py-1 { padding-top: 2px !important; padding-bottom: 2px !important; }
-            .text-sm { font-size: 14px !important; }
-            .font-semibold { font-weight: 600 !important; }
-            .font-medium { font-weight: 500 !important; }
-            
-            /* Specific overrides to prevent oklch */
-            * { 
-              background-image: none !important; 
-              background: inherit !important; 
-            }
-          `;
-          clonedDoc.head.appendChild(style);
+      // Invoice Details section
+      const invoiceX = margin + sectionWidth + 10;
+      drawRect(invoiceX, yPosition, sectionWidth, 25, '#f9fafb', '#e5e7eb');
+      addText('Invoice Details:', invoiceX + 5, yPosition + 8, { size: 12, style: 'bold', color: '#111827' });
+      
+      let detailY = yPosition + 12;
+      addText(`Invoice #: ${order.id}`, invoiceX + 5, detailY, { size: 9, color: '#111827' });
+      detailY += 4;
+      addText(`Date: ${formatDate(order.createdAt)}`, invoiceX + 5, detailY, { size: 9, color: '#111827' });
+      detailY += 4;
+      
+      // Status badge
+      const statusText = order.status;
+      const statusColor = order.status === 'PAID' ? '#166534' : 
+                         order.status === 'PENDING' ? '#854d0e' : 
+                         order.status === 'SHIPPED' ? '#1e40af' : '#991b1b';
+      const statusBg = order.status === 'PAID' ? '#dcfce7' : 
+                      order.status === 'PENDING' ? '#fef3c7' : 
+                      order.status === 'SHIPPED' ? '#dbeafe' : '#fee2e2';
+      
+      // Draw status badge background
+      const statusWidth = pdf.getTextWidth(statusText) + 4;
+      drawRect(invoiceX + 5, detailY - 2, statusWidth, 5, statusBg);
+      addText(statusText, invoiceX + 7, detailY, { size: 8, style: 'bold', color: statusColor });
+      
+      if (order.stripeSessionId) {
+        detailY += 4;
+        addText(`Payment ID: ${order.stripeSessionId}`, invoiceX + 5, detailY, { size: 9, color: '#111827' });
+      }
+      
+      yPosition += 35;
+      
+      // Order Items Table
+      addText('Order Items:', margin, yPosition, { size: 14, style: 'bold', color: '#111827' });
+      yPosition += 8;
+      
+      // Table header
+      const tableY = yPosition;
+      const rowHeight = 8;
+      const col1Width = contentWidth * 0.5;
+      const col2Width = contentWidth * 0.15;
+      const col3Width = contentWidth * 0.175;
+      const col4Width = contentWidth * 0.175;
+      
+      // Header background
+      drawRect(margin, tableY, contentWidth, rowHeight, '#f3f4f6', '#d1d5db');
+      
+      // Header text
+      addText('Product', margin + 2, tableY + 5, { size: 10, style: 'bold', color: '#111827' });
+      addText('Quantity', margin + col1Width + 2, tableY + 5, { size: 10, style: 'bold', color: '#111827' });
+      addText('Unit Price', margin + col1Width + col2Width + 2, tableY + 5, { size: 10, style: 'bold', color: '#111827' });
+      addText('Total', margin + col1Width + col2Width + col3Width + 2, tableY + 5, { size: 10, style: 'bold', color: '#111827' });
+      
+      yPosition += rowHeight;
+      
+      // Table rows
+      order.items.forEach((item, index) => {
+        const rowY = yPosition + (index * rowHeight);
+        
+        // Alternate row background
+        if (index % 2 === 0) {
+          drawRect(margin, rowY, contentWidth, rowHeight, '#ffffff');
+        } else {
+          drawRect(margin, rowY, contentWidth, rowHeight, '#f9fafb');
         }
+        
+        // Product name
+        addText(item.name, margin + 2, rowY + 5, { size: 9, color: '#111827' });
+        
+        // Quantity badge
+        const qtyText = item.quantity.toString();
+        const qtyWidth = pdf.getTextWidth(qtyText) + 2;
+        drawRect(margin + col1Width + 1, rowY + 1, qtyWidth, 6, '#dbeafe');
+        addText(qtyText, margin + col1Width + 2, rowY + 4, { size: 8, style: 'bold', color: '#1e40af' });
+        
+        // Unit price
+        addText(formatCurrency(item.price), margin + col1Width + col2Width + 2, rowY + 5, { size: 9, color: '#111827' });
+        
+        // Total
+        addText(formatCurrency(item.price * item.quantity), margin + col1Width + col2Width + col3Width + 2, rowY + 5, { size: 9, style: 'bold', color: '#111827' });
+        
+        // Row border
+        drawLine(margin, rowY + rowHeight, margin + contentWidth, rowY + rowHeight, '#d1d5db');
       });
       
-      console.log('✅ Canvas created:', canvas.width, 'x', canvas.height);
-
-      // Create optimized PDF
-      console.log('🔄 Creating optimized PDF...');
-      const imgData = canvas.toDataURL('image/jpeg', 0.95); // High quality JPEG
-      const pdf = new jsPDF('p', 'mm', 'a4');
-
-      const imgWidth = 210; // A4 width in mm
-      const pageHeight = 297; // A4 height in mm
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      yPosition += (order.items.length * rowHeight) + 10;
       
-      // Simple scaling to fit page
-      let finalWidth = imgWidth;
-      let finalHeight = imgHeight;
+      // Total section
+      const totalY = yPosition;
+      const totalWidth = 60;
+      const totalX = margin + contentWidth - totalWidth;
       
-      if (imgHeight > pageHeight) {
-        const scale = pageHeight / imgHeight;
-        finalHeight = pageHeight;
-        finalWidth = imgWidth * scale;
-      }
-
-      // Add small margins
-      const margin = 5;
-      const xOffset = margin;
-      const yOffset = margin;
+      drawRect(totalX, totalY, totalWidth, 12, '#f9fafb', '#e5e7eb');
+      addText('Total:', totalX + 5, totalY + 5, { size: 12, style: 'bold', color: '#111827' });
+      addText(formatCurrency(order.total), totalX + 5, totalY + 9, { size: 14, style: 'bold', color: '#111827' });
       
-      // Scale to fit with margins
-      const maxWidth = imgWidth - (2 * margin);
-      const maxHeight = pageHeight - (2 * margin);
+      yPosition += 25;
       
-      if (finalWidth > maxWidth) {
-        const scale = maxWidth / finalWidth;
-        finalWidth = maxWidth;
-        finalHeight = finalHeight * scale;
-      }
+      // Footer
+      drawLine(margin, yPosition, margin + contentWidth, yPosition, '#d1d5db');
+      yPosition += 10;
       
-      if (finalHeight > maxHeight) {
-        const scale = maxHeight / finalHeight;
-        finalHeight = maxHeight;
-        finalWidth = finalWidth * scale;
-      }
-
-      pdf.addImage(imgData, 'JPEG', xOffset, yOffset, finalWidth, finalHeight);
+      // Thank you message
+      drawRect(margin, yPosition, contentWidth, 20, '#f3f4f6', '#e5e7eb');
+      addCenteredText('Thank you for your business!', yPosition + 6, { size: 12, style: 'bold', color: '#111827' });
+      addCenteredText('We appreciate your trust in Kload for your electronic needs.', yPosition + 11, { size: 10, color: '#4b5563' });
+      
+      yPosition += 25;
+      
+      // Contact information
+      const contactWidth = contentWidth / 3;
+      const contactBoxHeight = 15;
+      
+      // Support
+      drawRect(margin, yPosition, contactWidth - 5, contactBoxHeight, '#ffffff', '#e5e7eb');
+      addText('Support', margin + 2, yPosition + 4, { size: 9, style: 'bold', color: '#111827' });
+      addText('support@kload.com', margin + 2, yPosition + 8, { size: 8, color: '#4b5563' });
+      
+      // Phone
+      drawRect(margin + contactWidth, yPosition, contactWidth - 5, contactBoxHeight, '#ffffff', '#e5e7eb');
+      addText('Phone', margin + contactWidth + 2, yPosition + 4, { size: 9, style: 'bold', color: '#111827' });
+      addText('+1 (555) 123-4567', margin + contactWidth + 2, yPosition + 8, { size: 8, color: '#4b5563' });
+      
+      // Website
+      drawRect(margin + (contactWidth * 2), yPosition, contactWidth - 5, contactBoxHeight, '#ffffff', '#e5e7eb');
+      addText('Website', margin + (contactWidth * 2) + 2, yPosition + 4, { size: 9, style: 'bold', color: '#111827' });
+      addText('www.kload.com', margin + (contactWidth * 2) + 2, yPosition + 8, { size: 8, color: '#4b5563' });
 
       // Download PDF
       const fileName = `invoice-${order.id}-${new Date().toISOString().split('T')[0]}.pdf`;
