@@ -204,9 +204,24 @@ export default function InvoiceGenerator({
       
       yPosition += rowHeight;
       
-      // Table rows - clean and simple with text wrapping
+      // Table rows - clean and simple with text wrapping and page break handling
       order.items.forEach((item, index) => {
-        const rowY = yPosition + (index * rowHeight);
+        // Check if we need a new page before adding this row
+        const estimatedRowHeight = 12; // Minimum row height
+        if (yPosition + estimatedRowHeight > pageHeight - margin - 60) { // Leave space for total and footer
+          pdf.addPage();
+          yPosition = margin + 20;
+          
+          // Redraw table header on new page
+          drawLine(margin, yPosition, margin + contentWidth, yPosition, '#d1d5db');
+          addText('Product', margin + 2, yPosition + 5, { size: 10, style: 'bold', color: '#111827' });
+          addText('Quantity', margin + col1Width + 2, yPosition + 5, { size: 10, style: 'bold', color: '#111827' });
+          addText('Unit Price', margin + col1Width + col2Width + 2, yPosition + 5, { size: 10, style: 'bold', color: '#111827' });
+          addText('Total', margin + col1Width + col2Width + col3Width + 2, yPosition + 5, { size: 10, style: 'bold', color: '#111827' });
+          yPosition += rowHeight;
+        }
+        
+        const rowY = yPosition;
         
         // Product name with text wrapping
         const productName = item.name;
@@ -238,7 +253,7 @@ export default function InvoiceGenerator({
         }
         
         // Calculate row height based on number of lines
-        const linesUsed = Math.ceil(lineY - (rowY + 5)) / lineHeight + 1;
+        const linesUsed = Math.ceil((lineY - (rowY + 5)) / lineHeight) + 1;
         const actualRowHeight = Math.max(rowHeight, linesUsed * lineHeight + 2);
         
         // Quantity - simple text
@@ -257,27 +272,66 @@ export default function InvoiceGenerator({
         yPosition += actualRowHeight;
       });
       
-      yPosition += 10;
+      yPosition += 15;
       
-      // Total section - simple and clean
+      // Check if we need a new page for total and footer
+      const totalSectionHeight = 40; // Estimated height for total + footer
+      const availableSpace = pageHeight - yPosition - margin;
+      
+      if (availableSpace < totalSectionHeight) {
+        // Add new page if not enough space
+        pdf.addPage();
+        yPosition = margin + 20; // Start with some top margin on new page
+      }
+      
+      // Total section - flexible positioning
       const totalY = yPosition;
       const totalText = 'Total:';
       const totalAmount = formatCurrency(order.total);
+      
+      // Calculate text widths with proper font settings
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(12);
       const totalTextWidth = pdf.getTextWidth(totalText);
+      
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(14);
       const totalAmountWidth = pdf.getTextWidth(totalAmount);
+      
+      // Position total at right side with proper spacing
       const totalX = margin + contentWidth - totalAmountWidth;
+      const totalLabelX = totalX - totalTextWidth - 10; // 10mm spacing between label and amount
       
-      addText(totalText, totalX - totalTextWidth - 5, totalY, { size: 12, color: '#111827' });
-      addText(totalAmount, totalX, totalY, { size: 14, style: 'bold', color: '#111827' });
+      // Draw total with proper alignment
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(12);
+      pdf.setTextColor('#111827');
+      pdf.text(totalText, totalLabelX, totalY);
       
-      yPosition += 20;
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(14);
+      pdf.setTextColor('#111827');
+      pdf.text(totalAmount, totalX, totalY);
       
-      // Footer - minimal and clean
-      yPosition += 10;
+      // Add a line above total for better separation
+      const lineY = totalY - 5;
+      drawLine(margin + contentWidth * 0.6, lineY, margin + contentWidth, lineY, '#d1d5db');
+      
+      yPosition += 25;
+      
+      // Footer - flexible positioning with proper spacing
+      const footerY = yPosition;
+      
+      // Check if footer fits on current page
+      const footerHeight = 20;
+      if (footerY + footerHeight > pageHeight - margin) {
+        pdf.addPage();
+        yPosition = margin + 20;
+      }
       
       // Thank you message
       addCenteredText('Thank you for your business!', yPosition, { size: 12, style: 'bold', color: '#111827' });
-      yPosition += 6;
+      yPosition += 8;
       addCenteredText('For support, please contact us at support@kload.com', yPosition, { size: 10, color: '#6b7280' });
 
       // Download PDF
