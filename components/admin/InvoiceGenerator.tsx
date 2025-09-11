@@ -315,16 +315,12 @@ export default function InvoiceGenerator({
                   <p className="text-lg text-gray-600">Premium E-commerce Store</p>
                 </div>
               </div>
-              <div className="bg-gray-50 p-4 rounded-xl border border-gray-200">
-                <p className="text-gray-800 font-semibold text-base">Your One-Stop Electronic Market</p>
-                <p className="text-sm text-gray-600 mt-1">Quality Electronics • Fast Delivery • 24/7 Support</p>
-              </div>
             </div>
 
             {/* Bill To and Invoice Details - Side by Side */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               {/* Bill To Section */}
-              <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+              <div className="p-4">
                 <h3 className="text-base font-bold text-gray-900 mb-2">Bill To:</h3>
                 {order.user ? (
                   <div className="text-gray-700">
@@ -339,7 +335,7 @@ export default function InvoiceGenerator({
               </div>
 
               {/* Invoice Details Section */}
-              <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+              <div className="p-4">
                 <h3 className="text-base font-bold text-gray-900 mb-2">Invoice Details:</h3>
                 <div className="text-gray-700 space-y-1">
                   <p className="text-sm">
@@ -352,19 +348,7 @@ export default function InvoiceGenerator({
                   </p>
                   <p className="flex items-center text-sm">
                     <span className="font-semibold">Status:</span>
-                    <span
-                      className={`ml-2 px-2 py-1 rounded text-xs font-bold ${
-                        order.status === 'PAID'
-                          ? 'bg-green-100 text-green-800'
-                          : order.status === 'PENDING'
-                            ? 'bg-yellow-100 text-yellow-800'
-                            : order.status === 'SHIPPED'
-                              ? 'bg-blue-100 text-blue-800'
-                              : order.status === 'DELIVERED'
-                                ? 'bg-green-100 text-green-800'
-                                : 'bg-red-100 text-red-800'
-                      }`}
-                    >
+                    <span className="ml-2 text-gray-700 font-semibold">
                       {order.status}
                     </span>
                   </p>
@@ -446,7 +430,7 @@ export default function InvoiceGenerator({
 
             {/* Total */}
             <div className="flex justify-end mb-6">
-              <div className="text-right bg-gray-50 p-4 rounded-lg border border-gray-200">
+              <div className="text-right p-4">
                 <div className="flex items-center space-x-3">
                   <span className="text-lg font-bold text-gray-900">Total:</span>
                   <span className="text-xl font-bold text-gray-900">
@@ -457,27 +441,8 @@ export default function InvoiceGenerator({
             </div>
 
             {/* Footer */}
-            <div className="mt-6 pt-4 border-t border-gray-300 text-center">
-              <div className="bg-gray-100 p-4 rounded-lg">
-                <p className="text-base font-bold text-gray-900 mb-1">Thank you for your business!</p>
-                <p className="text-gray-600 mb-3 text-sm">
-                  We appreciate your trust in Kload for your electronic needs.
-                </p>
-                <div className="flex justify-center space-x-6 text-xs text-gray-500">
-                  <div className="bg-white p-2 rounded border border-gray-200">
-                    <p className="font-semibold">Support</p>
-                    <p>support@kload.com</p>
-                  </div>
-                  <div className="bg-white p-2 rounded border border-gray-200">
-                    <p className="font-semibold">Phone</p>
-                    <p>+1 (555) 123-4567</p>
-                  </div>
-                  <div className="bg-white p-2 rounded border border-gray-200">
-                    <p className="font-semibold">Website</p>
-                    <p>www.kload.com</p>
-                  </div>
-                </div>
-              </div>
+            <div className="mt-6 pt-4 text-center">
+              <p className="text-sm text-gray-600">Thank you for your business!</p>
             </div>
           </div>
         </div>
