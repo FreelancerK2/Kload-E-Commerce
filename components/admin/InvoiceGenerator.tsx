@@ -204,12 +204,42 @@ export default function InvoiceGenerator({
       
       yPosition += rowHeight;
       
-      // Table rows - clean and simple
+      // Table rows - clean and simple with text wrapping
       order.items.forEach((item, index) => {
         const rowY = yPosition + (index * rowHeight);
         
-        // Product name
-        addText(item.name, margin + 2, rowY + 5, { size: 9, color: '#111827' });
+        // Product name with text wrapping
+        const productName = item.name;
+        const maxProductWidth = col1Width - 4; // Leave some padding
+        
+        // Split long product names into multiple lines
+        const words = productName.split(' ');
+        let currentLine = '';
+        let lineY = rowY + 5;
+        const lineHeight = 4;
+        
+        for (const word of words) {
+          const testLine = currentLine ? `${currentLine} ${word}` : word;
+          const testWidth = pdf.getTextWidth(testLine);
+          
+          if (testWidth > maxProductWidth && currentLine) {
+            // Draw current line and start new line
+            addText(currentLine, margin + 2, lineY, { size: 9, color: '#111827' });
+            currentLine = word;
+            lineY += lineHeight;
+          } else {
+            currentLine = testLine;
+          }
+        }
+        
+        // Draw the last line
+        if (currentLine) {
+          addText(currentLine, margin + 2, lineY, { size: 9, color: '#111827' });
+        }
+        
+        // Calculate row height based on number of lines
+        const linesUsed = Math.ceil(lineY - (rowY + 5)) / lineHeight + 1;
+        const actualRowHeight = Math.max(rowHeight, linesUsed * lineHeight + 2);
         
         // Quantity - simple text
         addText(item.quantity.toString(), margin + col1Width + 2, rowY + 5, { size: 9, color: '#111827' });
@@ -221,10 +251,13 @@ export default function InvoiceGenerator({
         addText(formatCurrency(item.price * item.quantity), margin + col1Width + col2Width + col3Width + 2, rowY + 5, { size: 9, color: '#111827' });
         
         // Simple row separator
-        drawLine(margin, rowY + rowHeight, margin + contentWidth, rowY + rowHeight, '#e5e7eb');
+        drawLine(margin, rowY + actualRowHeight, margin + contentWidth, rowY + actualRowHeight, '#e5e7eb');
+        
+        // Update yPosition for next row
+        yPosition += actualRowHeight;
       });
       
-      yPosition += (order.items.length * rowHeight) + 10;
+      yPosition += 10;
       
       // Total section - simple and clean
       const totalY = yPosition;
@@ -390,8 +423,8 @@ export default function InvoiceGenerator({
                       const firstImage = getFirstImage(item.image);
                       return (
                         <tr key={item.id} className="bg-white">
-                          <td className="border border-gray-300 px-4 py-3">
-                            <div className="flex items-center space-x-3">
+                          <td className="border border-gray-300 px-4 py-3 align-top">
+                            <div className="flex items-start space-x-3">
                               {firstImage && (
                                 <img
                                   src={
@@ -403,11 +436,11 @@ export default function InvoiceGenerator({
                                   className="w-12 h-12 object-cover rounded border border-gray-200 flex-shrink-0"
                                 />
                               )}
-                              <div className="flex-1">
-                                <p className="font-semibold text-gray-900 text-sm leading-tight whitespace-nowrap overflow-hidden text-ellipsis">
+                              <div className="flex-1 min-w-0">
+                                <p className="font-semibold text-gray-900 text-sm leading-tight break-words">
                                   {item.name}
                                 </p>
-                                <p className="text-xs text-gray-500 mt-1 whitespace-nowrap overflow-hidden text-ellipsis">Premium Quality Product</p>
+                                <p className="text-xs text-gray-500 mt-1 break-words">Premium Quality Product</p>
                               </div>
                             </div>
                           </td>
