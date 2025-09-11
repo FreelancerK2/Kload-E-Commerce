@@ -107,80 +107,72 @@ export default function InvoiceGenerator({
       // Header - Company Logo and Name
       yPosition += 10;
       
+      // Company name with logo in front
+      const companyName = 'Kload';
+      const companyNameWidth = pdf.getTextWidth(companyName);
+      const logoSize = 12;
+      const totalWidth = logoSize + 5 + companyNameWidth; // logo + spacing + text
+      const startX = (pageWidth - totalWidth) / 2;
+      
       // Draw logo circle
-      const logoSize = 15;
-      const logoX = (pageWidth - logoSize) / 2;
       pdf.setFillColor('#000000');
-      pdf.circle(logoX + logoSize/2, yPosition + logoSize/2, logoSize/2, 'F');
+      pdf.circle(startX + logoSize/2, yPosition + logoSize/2, logoSize/2, 'F');
       
       // Add "K" in logo
       pdf.setTextColor('#FFFFFF');
-      pdf.setFontSize(12);
+      pdf.setFontSize(10);
       pdf.setFont('helvetica', 'bold');
       const kWidth = pdf.getTextWidth('K');
-      pdf.text('K', logoX + logoSize/2 - kWidth/2, yPosition + logoSize/2 + 2);
+      pdf.text('K', startX + logoSize/2 - kWidth/2, yPosition + logoSize/2 + 1.5);
       
-      yPosition += logoSize + 5;
+      // Add company name next to logo
+      pdf.setTextColor('#000000');
+      pdf.setFontSize(24);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text(companyName, startX + logoSize + 5, yPosition + 8);
       
-      // Company name
-      addCenteredText('Kload', yPosition, { size: 24, style: 'bold', color: '#111827' });
-      yPosition += 8;
+      yPosition += 15;
       addCenteredText('Premium E-commerce Store', yPosition, { size: 14, color: '#4b5563' });
-      yPosition += 10;
-      
-      // Company tagline box
-      const taglineY = yPosition;
-      const taglineHeight = 15;
-      drawRect(margin, taglineY, contentWidth, taglineHeight, '#f9fafb', '#e5e7eb');
-      addCenteredText('Your One-Stop Electronic Market', taglineY + 6, { size: 12, style: 'bold', color: '#1f2937' });
-      addCenteredText('Quality Electronics • Fast Delivery • 24/7 Support', taglineY + 11, { size: 10, color: '#4b5563' });
-      yPosition += taglineHeight + 15;
+      yPosition += 8;
+      addCenteredText('Your One-Stop Electronic Market', yPosition, { size: 12, color: '#6b7280' });
+      yPosition += 15;
       
       // Bill To and Invoice Details
-      const sectionWidth = (contentWidth - 10) / 2;
+      const sectionWidth = (contentWidth - 20) / 2;
       
       // Bill To section
-      drawRect(margin, yPosition, sectionWidth, 25, '#f9fafb', '#e5e7eb');
-      addText('Bill To:', margin + 5, yPosition + 8, { size: 12, style: 'bold', color: '#111827' });
+      addText('Bill To:', margin, yPosition, { size: 12, style: 'bold', color: '#111827' });
+      yPosition += 6;
       
       if (order.user) {
-        addText(`${order.user.firstName} ${order.user.lastName}`, margin + 5, yPosition + 15, { size: 11, style: 'bold', color: '#111827' });
-        addText(order.user.email, margin + 5, yPosition + 20, { size: 10, color: '#4b5563' });
+        addText(`${order.user.firstName} ${order.user.lastName}`, margin, yPosition, { size: 11, color: '#111827' });
+        yPosition += 4;
+        addText(order.user.email, margin, yPosition, { size: 10, color: '#6b7280' });
       } else {
-        addText('Guest Customer', margin + 5, yPosition + 15, { size: 10, color: '#6b7280' });
+        addText('Guest Customer', margin, yPosition, { size: 10, color: '#6b7280' });
       }
       
+      yPosition += 8;
+      
       // Invoice Details section
-      const invoiceX = margin + sectionWidth + 10;
-      drawRect(invoiceX, yPosition, sectionWidth, 25, '#f9fafb', '#e5e7eb');
-      addText('Invoice Details:', invoiceX + 5, yPosition + 8, { size: 12, style: 'bold', color: '#111827' });
+      const invoiceX = margin + sectionWidth + 20;
+      addText('Invoice Details:', invoiceX, yPosition - 14, { size: 12, style: 'bold', color: '#111827' });
       
-      let detailY = yPosition + 12;
-      addText(`Invoice #: ${order.id}`, invoiceX + 5, detailY, { size: 9, color: '#111827' });
+      let detailY = yPosition - 8;
+      addText(`Invoice #: ${order.id}`, invoiceX, detailY, { size: 9, color: '#111827' });
       detailY += 4;
-      addText(`Date: ${formatDate(order.createdAt)}`, invoiceX + 5, detailY, { size: 9, color: '#111827' });
+      addText(`Date: ${formatDate(order.createdAt)}`, invoiceX, detailY, { size: 9, color: '#111827' });
       detailY += 4;
       
-      // Status badge
-      const statusText = order.status;
-      const statusColor = order.status === 'PAID' ? '#166534' : 
-                         order.status === 'PENDING' ? '#854d0e' : 
-                         order.status === 'SHIPPED' ? '#1e40af' : '#991b1b';
-      const statusBg = order.status === 'PAID' ? '#dcfce7' : 
-                      order.status === 'PENDING' ? '#fef3c7' : 
-                      order.status === 'SHIPPED' ? '#dbeafe' : '#fee2e2';
-      
-      // Draw status badge background
-      const statusWidth = pdf.getTextWidth(statusText) + 4;
-      drawRect(invoiceX + 5, detailY - 2, statusWidth, 5, statusBg);
-      addText(statusText, invoiceX + 7, detailY, { size: 8, style: 'bold', color: statusColor });
+      // Status - simple text without colored background
+      addText(`Status: ${order.status}`, invoiceX, detailY, { size: 9, color: '#111827' });
       
       if (order.stripeSessionId) {
         detailY += 4;
-        addText(`Payment ID: ${order.stripeSessionId}`, invoiceX + 5, detailY, { size: 9, color: '#111827' });
+        addText(`Payment ID: ${order.stripeSessionId}`, invoiceX, detailY, { size: 9, color: '#111827' });
       }
       
-      yPosition += 35;
+      yPosition += 15;
       
       // Order Items Table
       addText('Order Items:', margin, yPosition, { size: 14, style: 'bold', color: '#111827' });
@@ -194,8 +186,8 @@ export default function InvoiceGenerator({
       const col3Width = contentWidth * 0.175;
       const col4Width = contentWidth * 0.175;
       
-      // Header background
-      drawRect(margin, tableY, contentWidth, rowHeight, '#f3f4f6', '#d1d5db');
+      // Simple header line
+      drawLine(margin, tableY, margin + contentWidth, tableY, '#d1d5db');
       
       // Header text
       addText('Product', margin + 2, tableY + 5, { size: 10, style: 'bold', color: '#111827' });
@@ -205,78 +197,49 @@ export default function InvoiceGenerator({
       
       yPosition += rowHeight;
       
-      // Table rows
+      // Table rows - clean and simple
       order.items.forEach((item, index) => {
         const rowY = yPosition + (index * rowHeight);
-        
-        // Alternate row background
-        if (index % 2 === 0) {
-          drawRect(margin, rowY, contentWidth, rowHeight, '#ffffff');
-        } else {
-          drawRect(margin, rowY, contentWidth, rowHeight, '#f9fafb');
-        }
         
         // Product name
         addText(item.name, margin + 2, rowY + 5, { size: 9, color: '#111827' });
         
-        // Quantity badge
-        const qtyText = item.quantity.toString();
-        const qtyWidth = pdf.getTextWidth(qtyText) + 2;
-        drawRect(margin + col1Width + 1, rowY + 1, qtyWidth, 6, '#dbeafe');
-        addText(qtyText, margin + col1Width + 2, rowY + 4, { size: 8, style: 'bold', color: '#1e40af' });
+        // Quantity - simple text
+        addText(item.quantity.toString(), margin + col1Width + 2, rowY + 5, { size: 9, color: '#111827' });
         
         // Unit price
         addText(formatCurrency(item.price), margin + col1Width + col2Width + 2, rowY + 5, { size: 9, color: '#111827' });
         
         // Total
-        addText(formatCurrency(item.price * item.quantity), margin + col1Width + col2Width + col3Width + 2, rowY + 5, { size: 9, style: 'bold', color: '#111827' });
+        addText(formatCurrency(item.price * item.quantity), margin + col1Width + col2Width + col3Width + 2, rowY + 5, { size: 9, color: '#111827' });
         
-        // Row border
-        drawLine(margin, rowY + rowHeight, margin + contentWidth, rowY + rowHeight, '#d1d5db');
+        // Simple row separator
+        drawLine(margin, rowY + rowHeight, margin + contentWidth, rowY + rowHeight, '#e5e7eb');
       });
       
       yPosition += (order.items.length * rowHeight) + 10;
       
-      // Total section
+      // Total section - simple and clean
       const totalY = yPosition;
-      const totalWidth = 60;
-      const totalX = margin + contentWidth - totalWidth;
+      const totalText = 'Total:';
+      const totalAmount = formatCurrency(order.total);
+      const totalTextWidth = pdf.getTextWidth(totalText);
+      const totalAmountWidth = pdf.getTextWidth(totalAmount);
+      const totalX = margin + contentWidth - totalAmountWidth;
       
-      drawRect(totalX, totalY, totalWidth, 12, '#f9fafb', '#e5e7eb');
-      addText('Total:', totalX + 5, totalY + 5, { size: 12, style: 'bold', color: '#111827' });
-      addText(formatCurrency(order.total), totalX + 5, totalY + 9, { size: 14, style: 'bold', color: '#111827' });
+      addText(totalText, totalX - totalTextWidth - 5, totalY, { size: 12, color: '#111827' });
+      addText(totalAmount, totalX, totalY, { size: 14, style: 'bold', color: '#111827' });
       
-      yPosition += 25;
+      yPosition += 20;
       
-      // Footer
+      // Footer - simple and clean
       drawLine(margin, yPosition, margin + contentWidth, yPosition, '#d1d5db');
       yPosition += 10;
       
       // Thank you message
-      drawRect(margin, yPosition, contentWidth, 20, '#f3f4f6', '#e5e7eb');
-      addCenteredText('Thank you for your business!', yPosition + 6, { size: 12, style: 'bold', color: '#111827' });
-      addCenteredText('We appreciate your trust in Kload for your electronic needs.', yPosition + 11, { size: 10, color: '#4b5563' });
-      
-      yPosition += 25;
-      
-      // Contact information
-      const contactWidth = contentWidth / 3;
-      const contactBoxHeight = 15;
-      
-      // Support
-      drawRect(margin, yPosition, contactWidth - 5, contactBoxHeight, '#ffffff', '#e5e7eb');
-      addText('Support', margin + 2, yPosition + 4, { size: 9, style: 'bold', color: '#111827' });
-      addText('support@kload.com', margin + 2, yPosition + 8, { size: 8, color: '#4b5563' });
-      
-      // Phone
-      drawRect(margin + contactWidth, yPosition, contactWidth - 5, contactBoxHeight, '#ffffff', '#e5e7eb');
-      addText('Phone', margin + contactWidth + 2, yPosition + 4, { size: 9, style: 'bold', color: '#111827' });
-      addText('+1 (555) 123-4567', margin + contactWidth + 2, yPosition + 8, { size: 8, color: '#4b5563' });
-      
-      // Website
-      drawRect(margin + (contactWidth * 2), yPosition, contactWidth - 5, contactBoxHeight, '#ffffff', '#e5e7eb');
-      addText('Website', margin + (contactWidth * 2) + 2, yPosition + 4, { size: 9, style: 'bold', color: '#111827' });
-      addText('www.kload.com', margin + (contactWidth * 2) + 2, yPosition + 8, { size: 8, color: '#4b5563' });
+      addCenteredText('Thank you for your business!', yPosition, { size: 12, style: 'bold', color: '#111827' });
+      yPosition += 6;
+      addCenteredText('For support, please contact us at support@kload.com', yPosition, { size: 10, color: '#6b7280' });
 
       // Download PDF
       const fileName = `invoice-${order.id}-${new Date().toISOString().split('T')[0]}.pdf`;
