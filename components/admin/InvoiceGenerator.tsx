@@ -242,8 +242,10 @@ export default function InvoiceGenerator({
       // Footer - minimal and clean
       yPosition += 10;
       
-      // Simple thank you message
-      addCenteredText('Thank you for your business!', yPosition, { size: 10, color: '#6b7280' });
+      // Thank you message
+      addCenteredText('Thank you for your business!', yPosition, { size: 12, style: 'bold', color: '#111827' });
+      yPosition += 6;
+      addCenteredText('For support, please contact us at support@kload.com', yPosition, { size: 10, color: '#6b7280' });
 
       // Download PDF
       const fileName = `invoice-${order.id}-${new Date().toISOString().split('T')[0]}.pdf`;
@@ -442,7 +444,8 @@ export default function InvoiceGenerator({
 
             {/* Footer */}
             <div className="mt-6 pt-4 text-center">
-              <p className="text-sm text-gray-600">Thank you for your business!</p>
+              <p className="text-base font-bold text-gray-900 mb-1">Thank you for your business!</p>
+              <p className="text-sm text-gray-600">For support, please contact us at support@kload.com</p>
             </div>
           </div>
         </div>
