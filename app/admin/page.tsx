@@ -1437,11 +1437,8 @@ export default function AdminDashboard() {
               {/* User Info */}
               {isClient && user && (
                 <div className="flex items-center space-x-1 sm:space-x-3">
-                  <div className="hidden lg:block text-right">
-                    <div className="text-sm font-medium text-gray-900">
-                      {user.firstName || user.emailAddresses?.[0]?.emailAddress}
-                    </div>
-                    <div className="text-xs text-red-600">Administrator</div>
+                  <div className="hidden lg:block text-sm font-medium text-gray-900">
+                    {user.firstName || user.emailAddresses?.[0]?.emailAddress}
                   </div>
                   <UserButton
                     afterSignOutUrl="/"
