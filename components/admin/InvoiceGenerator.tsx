@@ -239,14 +239,11 @@ export default function InvoiceGenerator({
       
       yPosition += 20;
       
-      // Footer - simple and clean
-      drawLine(margin, yPosition, margin + contentWidth, yPosition, '#d1d5db');
+      // Footer - minimal and clean
       yPosition += 10;
       
-      // Thank you message
-      addCenteredText('Thank you for your business!', yPosition, { size: 12, style: 'bold', color: '#111827' });
-      yPosition += 6;
-      addCenteredText('For support, please contact us at support@kload.com', yPosition, { size: 10, color: '#6b7280' });
+      // Simple thank you message
+      addCenteredText('Thank you for your business!', yPosition, { size: 10, color: '#6b7280' });
 
       // Download PDF
       const fileName = `invoice-${order.id}-${new Date().toISOString().split('T')[0]}.pdf`;
