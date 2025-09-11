@@ -9,6 +9,7 @@ import ProductForm from '@/components/admin/ProductForm';
 import CategoryForm from '@/components/admin/CategoryForm';
 import InvoiceGenerator from '@/components/admin/InvoiceGenerator';
 import CustomPopup from '@/components/CustomPopup';
+import CustomerAvatar from '@/components/CustomerAvatar';
 import {
   Package,
   Users,
@@ -2489,12 +2490,14 @@ export default function AdminDashboard() {
                     <tr key={customer.id}>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
-                          <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center mr-3">
-                            <span className="text-gray-500 text-sm">
-                              {customer.firstName?.charAt(0) ||
-                                customer.email.charAt(0).toUpperCase()}
-                            </span>
-                          </div>
+                          <CustomerAvatar
+                            imageUrl={customer.imageUrl}
+                            firstName={customer.firstName}
+                            lastName={customer.lastName}
+                            email={customer.email}
+                            size="md"
+                            className="mr-3"
+                          />
                           <div>
                             <div className="text-sm font-medium text-gray-900">
                               {customer.firstName} {customer.lastName}
@@ -3822,17 +3825,28 @@ export default function AdminDashboard() {
 
                       {/* Customer Information */}
                       <div className="bg-gray-50 rounded-lg p-4">
-                        <h5 className="font-medium text-gray-900 mb-2">
+                        <h5 className="font-medium text-gray-900 mb-3">
                           Customer Information
                         </h5>
-                        <div className="space-y-2 text-sm">
-                          <div className="flex justify-between">
-                            <span className="text-gray-900">Name:</span>
-                            <span className="font-medium text-gray-900">
+                        <div className="flex items-center space-x-3 mb-3">
+                          <CustomerAvatar
+                            imageUrl={selectedOrder.user?.imageUrl}
+                            firstName={selectedOrder.user?.firstName}
+                            lastName={selectedOrder.user?.lastName}
+                            email={selectedOrder.user?.email}
+                            size="lg"
+                          />
+                          <div>
+                            <div className="font-medium text-gray-900">
                               {selectedOrder.user?.firstName}{' '}
                               {selectedOrder.user?.lastName}
-                            </span>
+                            </div>
+                            <div className="text-sm text-gray-500">
+                              {selectedOrder.user?.email}
+                            </div>
                           </div>
+                        </div>
+                        <div className="space-y-2 text-sm">
                           <div className="flex justify-between">
                             <span className="text-gray-900">Email:</span>
                             <span className="font-medium text-gray-900">
