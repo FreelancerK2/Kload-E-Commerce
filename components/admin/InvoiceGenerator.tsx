@@ -107,11 +107,11 @@ export default function InvoiceGenerator({
       // Header - Company Logo and Name
       yPosition += 10;
       
-      // Company name with logo in front
+      // Company name with logo in front - centered layout
       const companyName = 'Kload';
+      const logoSize = 15;
       const companyNameWidth = pdf.getTextWidth(companyName);
-      const logoSize = 12;
-      const totalWidth = logoSize + 5 + companyNameWidth; // logo + spacing + text
+      const totalWidth = logoSize + 8 + companyNameWidth; // logo + spacing + text
       const startX = (pageWidth - totalWidth) / 2;
       
       // Draw logo circle
@@ -120,22 +120,24 @@ export default function InvoiceGenerator({
       
       // Add "K" in logo
       pdf.setTextColor('#FFFFFF');
-      pdf.setFontSize(10);
+      pdf.setFontSize(12);
       pdf.setFont('helvetica', 'bold');
       const kWidth = pdf.getTextWidth('K');
-      pdf.text('K', startX + logoSize/2 - kWidth/2, yPosition + logoSize/2 + 1.5);
+      pdf.text('K', startX + logoSize/2 - kWidth/2, yPosition + logoSize/2 + 2);
       
       // Add company name next to logo
       pdf.setTextColor('#000000');
-      pdf.setFontSize(24);
+      pdf.setFontSize(28);
       pdf.setFont('helvetica', 'bold');
-      pdf.text(companyName, startX + logoSize + 5, yPosition + 8);
+      pdf.text(companyName, startX + logoSize + 8, yPosition + 10);
       
-      yPosition += 15;
-      addCenteredText('Premium E-commerce Store', yPosition, { size: 14, color: '#4b5563' });
+      yPosition += 20;
+      
+      // Tagline - centered below the logo and text
+      addCenteredText('Premium E-commerce Store', yPosition, { size: 16, color: '#6b7280' });
       yPosition += 8;
-      addCenteredText('Your One-Stop Electronic Market', yPosition, { size: 12, color: '#6b7280' });
-      yPosition += 15;
+      addCenteredText('Your One-Stop Electronic Market', yPosition, { size: 14, color: '#9ca3af' });
+      yPosition += 20;
       
       // Bill To and Invoice Details
       const sectionWidth = (contentWidth - 20) / 2;
